@@ -81,17 +81,17 @@
   left: 0px;
 }
 .before-after-container .btn-array .btn {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0.3, 0.3, 0.3, 0.3);
   color: white;
   box-shadow: none;
   border-radius: 0px;
   margin-right: -5px;
 }
 .before-after-container .btn-array .btn:active {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0.3, 0.3, 0.3, 0.7);
   box-shadow: none;
 }
 .before-after-container .btn-array .btn.focus {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0.3, 0.3, 0.3, 0.7);
   box-shadow: none;
 }
