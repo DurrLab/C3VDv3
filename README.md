@@ -7,7 +7,7 @@ This repository contains the registration and rendering code used in *Colonoscop
 ## Prerequisites
 ### Software
 * Ubuntu 20.04
-* CMake>=3.22
+* CMake>=3.5
 * Nvidia Device Drivers>=450
 * Nvidia CUDA>=11.1
 ### Hardware
@@ -52,7 +52,7 @@ Before running any of the programs, create a new working directory for each vide
     │   ├── 0001.png
     │   │   ...
     │   └── N-1.png
-    ├── depth/        # GAN-predicted depth image folder
+    ├── edges/        # GAN-predicted edge image folder
     │   ├── 0000.png         
     │   ├── 0001.png
     │   │   ...
@@ -79,7 +79,7 @@ Parameters can be manipulated using inputs on the GUI window or keyboard. Press 
   <img src="https://github.com/DurrLab/C3VD/blob/gh-pages/assets/img/alignmentGui.png" alt="ply" width=320/>
 </p>
 
-### Registration (COMING SOON)
+### Registration
 After updating the <modelTransform></modelTransform> parameters in the configuration file with the model transform values from the alignment GUI, an optimization can be run to fine-tune the video alignment. In addition to the configuration parameters listed above, the following parameters should be added to the configuration file before running the registration program:
 - *deltaR*: +/- parameter space bounds for rotation components of model position (radians)
 - *deltaT*: +/- parameter space bounds for translation components of model position (millimeters)
