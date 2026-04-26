@@ -28,6 +28,7 @@ typedef owl::RayT<1, 2>  OcclusionRay;
 struct PrimaryRayPayload
 {
     glm::vec3   hitPos;  /* Surface intersection point in world coord. */
+    glm::vec3   hitPosPrev; /* Same material point in previous-frame mesh/world coord. */
     int         primID;  /* Primitive id of the intersected face. */
     float       diffuse; /* Diffuse lambertian shading. */
     float       depth;   /* Z-depth of intersection point. */
@@ -100,6 +101,8 @@ OPTIX_CLOSEST_HIT_PROGRAM(primary)()
     const int primID = optixGetPrimitiveIndex();
 
     const owl::vec3i index = sbtData.index[primID];
+    const float2 barycentrics = optixGetTriangleBarycentrics();
+    const float w = 1.0f - barycentrics.x - barycentrics.y;
 
     /* Basic hit information. */
     const glm::vec3 dir    = make_vec3(optixGetWorldRayDirection());
@@ -110,12 +113,34 @@ OPTIX_CLOSEST_HIT_PROGRAM(primary)()
     /* Z-depth. */
     float depth = glm::vec3(glm::vec4(hitPos-origin,1.0)*optixLaunchParams.t_curr).z;
 
-    /* Normal. */
-    const owl::vec3f &A = sbtData.vertex[index.x];
-    const owl::vec3f &B = sbtData.vertex[index.y];
-    const owl::vec3f &C = sbtData.vertex[index.z];
+    /* Reconstruct the same material point using previous-frame vertex positions. */
+    const owl::vec3f &VaPrev = sbtData.vertexPrev ? sbtData.vertexPrev[index.x] : sbtData.vertex[index.x];
+    const owl::vec3f &VbPrev = sbtData.vertexPrev ? sbtData.vertexPrev[index.y] : sbtData.vertex[index.y];
+    const owl::vec3f &VcPrev = sbtData.vertexPrev ? sbtData.vertexPrev[index.z] : sbtData.vertex[index.z];
+    const owl::vec3f hitPosPrevObj = w * VaPrev + barycentrics.x * VbPrev + barycentrics.y * VcPrev;
+    const glm::vec3 hitPosPrev = make_vec3(optixTransformPointFromObjectToWorldSpace(
+        make_float3(hitPosPrevObj.x, hitPosPrevObj.y, hitPosPrevObj.z)));
 
-    owl::vec3f N = normalize(owl::common::cross(B-A,C-A));
+    /* Normal - use smooth vertex normals if available. */
+    owl::vec3f N;
+    
+    if (sbtData.normal != nullptr) {
+        /* Use smooth vertex normals. */
+        const owl::vec3f &Na = sbtData.normal[index.x];
+        const owl::vec3f &Nb = sbtData.normal[index.y];
+        const owl::vec3f &Nc = sbtData.normal[index.z];
+        
+        /* Interpolate normals using barycentric coordinates. */
+        N = normalize(w * Na + barycentrics.x * Nb + barycentrics.y * Nc);
+    }
+    else {
+        /* Fall back to face normal if no vertex normals available. */
+        const owl::vec3f &A = sbtData.vertex[index.x];
+        const owl::vec3f &B = sbtData.vertex[index.y];
+        const owl::vec3f &C = sbtData.vertex[index.z];
+        
+        N = normalize(owl::common::cross(B-A,C-A));
+    }
 
     glm::vec3 Nw = make_vec3(normalize(optixTransformNormalFromObjectToWorldSpace(N)));
 
@@ -130,6 +155,7 @@ OPTIX_CLOSEST_HIT_PROGRAM(primary)()
 
     /* Store in ray payload. */
     prd.hitPos  = hitPos;
+    prd.hitPosPrev = hitPosPrev;
     prd.primID  = primID;
     prd.diffuse = diffuse;
     prd.depth   = depth;
@@ -181,13 +207,14 @@ OPTIX_RAYGEN_PROGRAM(render)()
     /* Initialize primary ray payload. */
     PrimaryRayPayload prd;
     prd.hitPos  = glm::vec3(0.0f);
+    prd.hitPosPrev = glm::vec3(0.0f);
     prd.primID  = -1;
     prd.diffuse = 0.0f;
     prd.depth   = 1.0f;
     prd.normal  = glm::vec3(0.0f);
 
     /* Trace ray with primary ray program and store results in PRD. */
-    owl::traceRay(optixLaunchParams.traversable, ray, prd, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
+    owl::traceRay(optixLaunchParams.traversableCurr, ray, prd, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
 
     /* If the ray intersected the model. */
     if(prd.primID != -1)
@@ -207,7 +234,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
         if(optixLaunchParams.renderFlags & RenderFlags::OPTICAL_FLOW)
         {
             /* Transform intersection point from world space to previous frame camera coordinate system. */
-            glm::vec3 v_cam_prev = glm::vec3(glm::inverse(optixLaunchParams.t_prev)*glm::vec4(prd.hitPos,1.0));
+            glm::vec3 v_cam_prev = glm::vec3(glm::inverse(optixLaunchParams.t_prev)*glm::vec4(prd.hitPosPrev,1.0));
             
             /* Forward project the point to the sensor plane. */
             glm::vec2 px_prev = forwardProjectVertex(v_cam_prev);
@@ -232,7 +259,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
                 prd_prev.hitPos = glm::vec3(0.0);
                 prd_prev.primID = -1;
 
-                owl::traceRay(optixLaunchParams.traversable, ray_prev, prd_prev, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
+                owl::traceRay(optixLaunchParams.traversablePrev, ray_prev, prd_prev, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
 
                 /*  If the intersection primitive id matches, then 
                     it is not occluded -> save the flow. */
@@ -250,7 +277,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
             prd_occ.hitPos = glm::vec3(0.0);
             prd_occ.primID = -1;
 
-            owl::traceRay(optixLaunchParams.traversable, ray_occ, prd_occ, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
+            owl::traceRay(optixLaunchParams.traversableCurr, ray_occ, prd_occ, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
 
             /* If intersected and within the max depth. */
             if(prd_occ.primID!=-1 && (glm::vec3(optixLaunchParams.t_curr*glm::vec4(prd_occ.hitPos,1.0)).z <= 100.0))

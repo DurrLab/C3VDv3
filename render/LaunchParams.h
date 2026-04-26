@@ -35,14 +35,16 @@ struct LaunchParams
 
     uint8_t     renderFlags;
 
-    /* Optix ray traversable object. */
-    OptixTraversableHandle traversable;
+    /* Optix ray traversable objects for current and previous meshes. */
+    OptixTraversableHandle traversableCurr;
+    OptixTraversableHandle traversablePrev;
 };
 
 struct TriangleMeshSBTData
 {
     owl::vec3f *color;
     owl::vec3f *vertex;
+    owl::vec3f *vertexPrev;
     owl::vec3f *normal;
     owl::vec3f *texcoord;
     owl::vec3i *index;

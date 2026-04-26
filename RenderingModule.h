@@ -43,8 +43,12 @@ class RenderingModule
 
     private:
         void loadParams(std::string filepath);
-        
+
         unsigned int getFrameCount(std::string directoryPath);
+
+        std::vector<glm::vec3> loadVertexPositions(int frameNumber);
+
+        std::vector<glm::vec3> loadVertexNormals(int frameNumber);
 
         void writeOBJ(const std::string &filename,const Model *model,const uint8_t *coverageTex, glm::mat4 modelTransform);
 
@@ -76,6 +80,7 @@ class RenderingModule
         std::string rgbFolderPath;
         std::string maskFilePath;
         std::string renderFolderPath;
+        std::string meshFolderPath;
 
         /* Config values. */
         std::vector<float> modelTransformR6;

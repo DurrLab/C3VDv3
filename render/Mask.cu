@@ -19,11 +19,11 @@ Mask::Mask(pangolin::TypedImage mask)
     bool* mask_host = (bool*)malloc(width*height*sizeof(bool));
     for(int y = 0; y < height; y++)
         for(int x = 0; x < width; x++)
-            mask_host[y*height + x] = mask(x,y) > 0 ? 1 : 0;
+            mask_host[y*width + x] = mask(x,y) > 0 ? 1 : 0;
     
     /* Move the binary mask to the device. */
     cudaMalloc((void**) &mask_dev, sizeof(bool)*width*height);
-    cudaMemcpy(mask_dev, mask.ptr, sizeof(bool)*width*height, cudaMemcpyHostToDevice);
+    cudaMemcpy(mask_dev, mask_host, sizeof(bool)*width*height, cudaMemcpyHostToDevice);
 
     free(mask_host);
 }

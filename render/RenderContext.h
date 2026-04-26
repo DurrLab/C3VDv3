@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <owl/owl.h>
 #include <owl/owl_host.h>
+#include <vector>
 
 #include "Intrinsics.h"
 #include "LaunchParams.h"
@@ -29,6 +30,10 @@ class RenderContext
         void updateCameraTransform(glm::mat4 tform, bool flag);
 
         void updateMeshTransform(glm::mat4 tform);
+
+        void updateVertexPositions(const std::vector<glm::vec3> &vertices);
+
+        void updateVertexNormals(const std::vector<glm::vec3> &normals);
 
         void updateRenderFlags(uint8_t flags);
 
@@ -56,6 +61,14 @@ class RenderContext
         OWLLaunchParams launchParams    = nullptr;
         OWLRayGen       rayGen          = nullptr;
         OWLGroup        world           = nullptr;
+        OWLGroup        worldPrev       = nullptr;
+        OWLGroup        triGroup        = nullptr;
+        OWLGroup        triGroupPrev    = nullptr;
+        OWLBuffer       vertexBuffer    = nullptr;
+        OWLBuffer       vertexPrevBuffer = nullptr;
+        OWLBuffer       normalBuffer    = nullptr;
+
+        std::vector<glm::vec3> previousVerticesHost;
 
 };
 #endif /* RENDERCONTEXT_H_ */

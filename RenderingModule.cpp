@@ -34,9 +34,11 @@ RenderingModule::RenderingModule(int argc, char* argv[])
 
     modelFilePath      = std::string(argv[2]) + "model.obj";
     poseFilePath       = std::string(argv[2]) + "pose.txt";
-    rgbFolderPath      = std::string(argv[2]) + "rgb/";
+    // rgbFolderPath      = std::string(argv[2]) + "rgb/";
     maskFilePath       = std::string(argv[2]) + "mask.png";
     renderFolderPath   = std::string(argv[2]) + "render/";
+    meshFolderPath     = std::string(argv[2]);
+    std::string vertexFilePath = meshFolderPath + "vertex_positions.bin";
 
     /* Load obj file. */
     model = loadOBJ(modelFilePath);
@@ -53,8 +55,36 @@ RenderingModule::RenderingModule(int argc, char* argv[])
     /* Pose log. */
     poseLog = new PoseLog(poseFilePath);
 
-    /* Inquire the number of frames in the target folder. */
-    numFrames = getFrameCount(rgbFolderPath);
+    /* Derive frame count from vertex_positions.bin size. */
+    const size_t numVertices = model->meshes[0]->vertex.size();
+    const size_t bytesPerFrame = numVertices * 3 * sizeof(float);
+
+    FILE* vertexFile = fopen(vertexFilePath.c_str(), "rb");
+    if (!vertexFile)
+    {
+        printf("\x1B[31mError: Could not open %s\x1B[0m\n", vertexFilePath.c_str());
+        exit(EXIT_FAILURE);
+    }
+
+    fseek(vertexFile, 0, SEEK_END);
+    long vertexFileSize = ftell(vertexFile);
+    fclose(vertexFile);
+
+    if (vertexFileSize <= 0)
+    {
+        printf("\x1B[31mError: vertex_positions.bin is empty or unreadable\x1B[0m\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if ((size_t)vertexFileSize % bytesPerFrame != 0)
+    {
+        printf("\x1B[31mError: vertex_positions.bin size (%ld) is not divisible by bytes per frame (%zu)\x1B[0m\n",
+               vertexFileSize, bytesPerFrame);
+        exit(EXIT_FAILURE);
+    }
+
+    numFrames = (unsigned int)((size_t)vertexFileSize / bytesPerFrame);
+    printf("Detected %u frames from vertex_positions.bin\n", numFrames);
 
     /* Create optix rendering context. */
     context = new RenderContext(model, intrinsics);
@@ -67,6 +97,7 @@ RenderingModule::RenderingModule(int argc, char* argv[])
                              | RenderFlags::COVERAGE);
 
     /* Set the model transform to the ground truth. */
+    /* Can set to 0 */
     glm::quat qx = glm::angleAxis((float)modelTransformR6[0],glm::vec3(1.0,0.0,0.0));
     glm::quat qy = glm::angleAxis((float)modelTransformR6[1],glm::vec3(0.0,1.0,0.0));
     glm::quat qz = glm::angleAxis((float)modelTransformR6[2],glm::vec3(0.0,0.0,1.0));
@@ -123,6 +154,14 @@ void RenderingModule::launch(void)
     /* Iterate through each frame and render. */
     for(int n = 0; n < numFrames; n++)
     {
+        /* Load deformed vertices for this frame. */
+        std::vector<glm::vec3> deformedVertices = loadVertexPositions(n);
+        context->updateVertexPositions(deformedVertices);
+
+        /* Load deformed normals for this frame. */
+        std::vector<glm::vec3> deformedNormals = loadVertexNormals(n);
+        context->updateVertexNormals(deformedNormals);
+
         /* Update camera transform (current). */
         glm::mat4 A1_curr = poseLog->getTransform(n * (1.0f / FPS) + poseStartTime);
         glm::mat4 B1_curr = handeye->A2B(A1_curr);
@@ -248,6 +287,116 @@ unsigned int RenderingModule::getFrameCount(std::string directoryPath)
         printf("Identified %d .png frames in folder %s\n", count, directoryPath.c_str());
     }
     return count;
+}
+
+std::vector<glm::vec3> RenderingModule::loadVertexPositions(int frameNumber)
+{
+    // Build filename for this frame's vertex data
+    std::string filename = meshFolderPath + "vertex_positions.bin";
+    
+    // Open binary file
+    FILE* file = fopen(filename.c_str(), "rb");
+    if (!file) {
+        printf("\x1B[31mError: Could not open %s\x1B[0m\n", filename.c_str());
+        exit(EXIT_FAILURE);
+    }
+    
+    // Get file size
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+    
+    // Get number of vertices from model
+    int numVertices = model->meshes[0]->vertex.size();
+    
+    // Seek to the correct frame's data
+    // Assuming format: numVertices floats per frame, 3 components each
+    size_t bytesPerFrame = numVertices * 3 * sizeof(float);
+    fseek(file, frameNumber * bytesPerFrame, SEEK_SET);
+    
+    // Read vertex data
+    std::vector<glm::vec3> vertices(numVertices);
+    size_t bytesRead = fread(vertices.data(), sizeof(float), numVertices * 3, file);
+    
+    if (bytesRead != (size_t)(numVertices * 3)) {
+        printf("\x1B[31mError: Could not read all vertex data for frame %d (read %zu, expected %zu)\x1B[0m\n", 
+               frameNumber, bytesRead, (size_t)(numVertices * 3));
+        exit(EXIT_FAILURE);
+    }
+    
+    // Debug output on first frame
+    if (frameNumber == 0) {
+        printf("\x1B[36m[Vertex Positions Debug]\x1B[0m File: %s, Size: %ld bytes, Vertices: %d, BytesPerFrame: %zu\n", 
+               filename.c_str(), fileSize, numVertices, bytesPerFrame);
+        if (numVertices > 0) {
+            printf("  First vertex: [%.6f, %.6f, %.6f]\n", vertices[0].x, vertices[0].y, vertices[0].z);
+            if (numVertices > 1) printf("  Second vertex: [%.6f, %.6f, %.6f]\n", vertices[1].x, vertices[1].y, vertices[1].z);
+            if (numVertices > 10) printf("  10th vertex: [%.6f, %.6f, %.6f]\n", vertices[9].x, vertices[9].y, vertices[9].z);
+        }
+    }
+    
+    fclose(file);
+    return vertices;
+}
+
+std::vector<glm::vec3> RenderingModule::loadVertexNormals(int frameNumber)
+{
+    // Build filename for this frame's normal data
+    std::string filename = meshFolderPath + "vertex_normals.bin";
+    
+    // Open binary file
+    FILE* file = fopen(filename.c_str(), "rb");
+    if (!file) {
+        printf("\x1B[31mError: Could not open %s\x1B[0m\n", filename.c_str());
+        exit(EXIT_FAILURE);
+    }
+    
+    // Get file size
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+    
+    // Get number of normals from model
+    int numNormals = model->meshes[0]->normal.size();
+    
+    // Seek to the correct frame's data
+    // Assuming format: numNormals floats per frame, 3 components each
+    size_t bytesPerFrame = numNormals * 3 * sizeof(float);
+    fseek(file, frameNumber * bytesPerFrame, SEEK_SET);
+    
+    // Read normal data
+    std::vector<glm::vec3> normals(numNormals);
+    size_t bytesRead = fread(normals.data(), sizeof(float), numNormals * 3, file);
+    
+    if (bytesRead != (size_t)(numNormals * 3)) {
+        printf("\x1B[31mError: Could not read all normal data for frame %d (read %zu, expected %zu)\x1B[0m\n", 
+               frameNumber, bytesRead, (size_t)(numNormals * 3));
+        exit(EXIT_FAILURE);
+    }
+    
+    // Debug output on first frame
+    if (frameNumber == 0) {
+        printf("\x1B[36m[Vertex Normals Debug]\x1B[0m File: %s, Size: %ld bytes, Normals: %d, BytesPerFrame: %zu\n", 
+               filename.c_str(), fileSize, numNormals, bytesPerFrame);
+        if (numNormals > 0) {
+            float mag0 = glm::length(normals[0]);
+            printf("  First normal: [%.6f, %.6f, %.6f], magnitude: %.6f\n", 
+                   normals[0].x, normals[0].y, normals[0].z, mag0);
+            if (numNormals > 1) {
+                float mag1 = glm::length(normals[1]);
+                printf("  Second normal: [%.6f, %.6f, %.6f], magnitude: %.6f\n", 
+                       normals[1].x, normals[1].y, normals[1].z, mag1);
+            }
+            if (numNormals > 10) {
+                float mag10 = glm::length(normals[9]);
+                printf("  10th normal: [%.6f, %.6f, %.6f], magnitude: %.6f\n", 
+                       normals[9].x, normals[9].y, normals[9].z, mag10);
+            }
+        }
+    }
+    
+    fclose(file);
+    return normals;
 }
 
 void RenderingModule::writeOBJ(const std::string &filename,const Model *model,const uint8_t *coverageTex, glm::mat4 modelTransform)

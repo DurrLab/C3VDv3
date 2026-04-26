@@ -44,7 +44,8 @@ RenderContext::RenderContext(const Model *model, const Intrinsics &intrinsics)
         { "fbOcclusion",    OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,fbOcclusion)},
         { "coverage",       OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,coverage)},
         { "renderFlags",    OWL_USER_TYPE(uint8_t),     OWL_OFFSETOF(LaunchParams,renderFlags)},
-        { "world",          OWL_GROUP,                  OWL_OFFSETOF(LaunchParams,traversable)},
+        { "worldCurr",      OWL_GROUP,                  OWL_OFFSETOF(LaunchParams,traversableCurr)},
+        { "worldPrev",      OWL_GROUP,                  OWL_OFFSETOF(LaunchParams,traversablePrev)},
         { }
     };
     launchParams = owlParamsCreate(context,sizeof(LaunchParams),launchParamsVars,-1);
@@ -131,12 +132,66 @@ void RenderContext::updateMeshTransform(const glm::mat4 tform)
 
     /* Update the transform in the accel structure. */
     owlInstanceGroupSetTransform(world, 0, colMajorTransform, OWL_MATRIX_FORMAT_OWL);
+    owlInstanceGroupSetTransform(worldPrev, 0, colMajorTransform, OWL_MATRIX_FORMAT_OWL);
 
     /* Refit the accel structure with the new transform. */
     owlGroupBuildAccel(world);
+    owlGroupBuildAccel(worldPrev);
 
     /* Update the SBT data. */
     owlBuildSBT(context);
+}
+
+/*  Updates vertex positions from deformed mesh. */
+void RenderContext::updateVertexPositions(const std::vector<glm::vec3> &vertices)
+{
+    if (!vertexBuffer || !vertexPrevBuffer) {
+        printf("Error: Vertex buffer not initialized\n");
+        return;
+    }
+
+    const size_t expectedVertices = model->meshes[0]->vertex.size();
+    if (vertices.size() != expectedVertices) {
+        printf("Error: Vertex update size mismatch (got %zu, expected %zu)\n",
+               vertices.size(), expectedVertices);
+        return;
+    }
+
+    /* Keep an explicit previous mesh for optical-flow occlusion tracing. */
+    if (previousVerticesHost.empty()) {
+        owlBufferUpload(vertexPrevBuffer, vertices.data(), 0, vertices.size());
+    } else {
+        owlBufferUpload(vertexPrevBuffer, previousVerticesHost.data(), 0, previousVerticesHost.size());
+    }
+
+    /* Upload deformed vertices to device vertex buffer. */
+    owlBufferUpload(vertexBuffer, vertices.data(), 0, vertices.size());
+    previousVerticesHost = vertices;
+
+    /* Rebuild BLAS, then rebuild top-level instance accel. */
+    owlGroupBuildAccel(triGroup);
+    owlGroupBuildAccel(triGroupPrev);
+    owlGroupBuildAccel(world);
+    owlGroupBuildAccel(worldPrev);
+}
+
+/*  Updates vertex normals from deformed mesh normals. */
+void RenderContext::updateVertexNormals(const std::vector<glm::vec3> &normals)
+{
+    if (!normalBuffer) {
+        printf("Error: Normal buffer not initialized\n");
+        return;
+    }
+
+    const size_t expectedNormals = model->meshes[0]->normal.size();
+    if (normals.size() != expectedNormals) {
+        printf("Error: Normal update size mismatch (got %zu, expected %zu)\n",
+               normals.size(), expectedNormals);
+        return;
+    }
+
+    /* Upload deformed normals to device normal buffer. */
+    owlBufferUpload(normalBuffer, normals.data(), 0, normals.size());
 }
 
 /* Updates which outputs to render. */
@@ -165,6 +220,7 @@ void RenderContext::buildAccel(void)
     OWLVarDecl triMeshVars[] = {
         { "color",      OWL_FLOAT3, OWL_OFFSETOF(TriangleMeshSBTData,color) },
         { "vertex",     OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,vertex) },
+        { "vertexPrev", OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,vertexPrev) },
         { "normal",     OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,normal) },
         { "index",      OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,index) },
         { "texcoord",   OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,texcoord) },
@@ -195,48 +251,73 @@ void RenderContext::buildAccel(void)
 
     /* Create the model geometry. */
     std::vector<OWLGeom> geoms;
+    std::vector<OWLGeom> geomsPrev;
     for (int meshID=0;meshID<numMeshes;meshID++)
     {
         TriangleMesh &mesh = *model->meshes[meshID];
 
-        OWLBuffer vertexBuffer      = owlDeviceBufferCreate(context,OWL_FLOAT3,mesh.vertex.size(),mesh.vertex.data());
+        vertexBuffer            = owlDeviceBufferCreate(context,OWL_FLOAT3,mesh.vertex.size(),mesh.vertex.data());
+        vertexPrevBuffer        = owlDeviceBufferCreate(context,OWL_FLOAT3,mesh.vertex.size(),mesh.vertex.data());
         OWLBuffer indexBuffer       = owlDeviceBufferCreate(context,OWL_INT3,mesh.index.size(),mesh.index.data());
-        OWLBuffer normalBuffer      = mesh.normal.empty() ? nullptr : 
+        normalBuffer            = mesh.normal.empty() ? nullptr : 
                                     owlDeviceBufferCreate(context,OWL_FLOAT3,mesh.normal.size(),mesh.normal.data());
         OWLBuffer texcoordBuffer    = mesh.texcoord.empty() ? nullptr : 
                                     owlDeviceBufferCreate(context,OWL_FLOAT2,mesh.texcoord.size(),mesh.texcoord.data());
     
         OWLGeom geom = owlGeomCreate(context,triMeshGeomType);
+        OWLGeom geomPrev = owlGeomCreate(context,triMeshGeomType);
 
         owlTrianglesSetVertices(geom,vertexBuffer,mesh.vertex.size(),sizeof(owl::vec3f),0);
         owlTrianglesSetIndices(geom,indexBuffer,mesh.index.size(),sizeof(owl::vec3i),0);
 
+        owlTrianglesSetVertices(geomPrev,vertexPrevBuffer,mesh.vertex.size(),sizeof(owl::vec3f),0);
+        owlTrianglesSetIndices(geomPrev,indexBuffer,mesh.index.size(),sizeof(owl::vec3i),0);
+
         owlGeomSetBuffer(geom,"index",indexBuffer);
         owlGeomSetBuffer(geom,"vertex",vertexBuffer);
+        owlGeomSetBuffer(geom,"vertexPrev",vertexPrevBuffer);
         owlGeomSetBuffer(geom,"normal",normalBuffer);
         owlGeomSetBuffer(geom,"texcoord",texcoordBuffer);
 
+        owlGeomSetBuffer(geomPrev,"index",indexBuffer);
+        owlGeomSetBuffer(geomPrev,"vertex",vertexPrevBuffer);
+        owlGeomSetBuffer(geomPrev,"vertexPrev",vertexPrevBuffer);
+        owlGeomSetBuffer(geomPrev,"normal",normalBuffer);
+        owlGeomSetBuffer(geomPrev,"texcoord",texcoordBuffer);
+
         owlGeomSet3f(geom,"color",(const owl3f &)mesh.diffuse);
+        owlGeomSet3f(geomPrev,"color",(const owl3f &)mesh.diffuse);
         if (mesh.diffuseTextureID >= 0) 
         {
             owlGeomSet1i(geom,"hasTexture",1);
+            owlGeomSet1i(geomPrev,"hasTexture",1);
             assert(mesh.diffuseTextureID < (int)textures.size());
             owlGeomSetTexture(geom,"texture",textures[mesh.diffuseTextureID]);
+            owlGeomSetTexture(geomPrev,"texture",textures[mesh.diffuseTextureID]);
         }
         else
         {
             owlGeomSet1i(geom,"hasTexture",0);
+            owlGeomSet1i(geomPrev,"hasTexture",0);
         }
         geoms.push_back(geom);
+        geomsPrev.push_back(geomPrev);
     }
     /* Combine into a triangle group. */
-    OWLGroup triGroup = owlTrianglesGeomGroupCreate(context,geoms.size(),geoms.data());
+    triGroup = owlTrianglesGeomGroupCreate(context,geoms.size(),geoms.data());
+    triGroupPrev = owlTrianglesGeomGroupCreate(context,geomsPrev.size(),geomsPrev.data());
     owlGroupBuildAccel(triGroup);
+    owlGroupBuildAccel(triGroupPrev);
 
     /* Build the acceleration structure. */
     world = owlInstanceGroupCreate(context,1);
     owlInstanceGroupSetChild(world,0,triGroup);
+    worldPrev = owlInstanceGroupCreate(context,1);
+    owlInstanceGroupSetChild(worldPrev,0,triGroupPrev);
     owlGroupBuildAccel(world);
-    owlParamsSetGroup(launchParams,"world",world);
+    owlGroupBuildAccel(worldPrev);
+    owlParamsSetGroup(launchParams,"worldCurr",world);
+    owlParamsSetGroup(launchParams,"worldPrev",worldPrev);
     owlGroupBuildAccel(world);
+    owlGroupBuildAccel(worldPrev);
 }
