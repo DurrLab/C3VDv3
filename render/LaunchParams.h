@@ -27,6 +27,7 @@ struct LaunchParams
 
     /* Output buffers. */
     uint32_t    *fbDiffuse;
+    uint32_t    *fbRgb;
     uint16_t    *fbDepth;
     owl::vec4us *fbNormals;
     owl::vec4us *fbFlow;
@@ -42,11 +43,13 @@ struct LaunchParams
 
 struct TriangleMeshSBTData
 {
-    owl::vec3f *color;
+    owl::vec3f color;
+    owl::vec3f specular;
+    float shininess;
     owl::vec3f *vertex;
     owl::vec3f *vertexPrev;
     owl::vec3f *normal;
-    owl::vec3f *texcoord;
+    owl::vec2f *texcoord;
     owl::vec3i *index;
     int hasTexture;
     cudaTextureObject_t texture;

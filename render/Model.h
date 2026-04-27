@@ -19,6 +19,8 @@ struct TriangleMesh {
 
     // material data:
     owl::vec3f              diffuse;
+    owl::vec3f              specular { 0.35f, 0.35f, 0.35f };
+    float                   shininess { 64.0f };
     int                     diffuseTextureID { -1 };
 };
 
@@ -44,6 +46,8 @@ struct Model {
     owl::box3f bounds;
 };
 
-Model *loadOBJ(const std::string &objFile);
+Model *loadOBJ(const std::string &objFile,
+               const std::string &materialFile = "",
+               const std::string &textureFile = "");
 
 #endif /* MODEL_H_ */

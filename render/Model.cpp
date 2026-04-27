@@ -10,8 +10,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#include <fstream>
 #include <map>
 #include <set>
+#include <sstream>
 
 namespace std{
     inline bool operator<(const tinyobj::index_t &a,
@@ -79,7 +81,8 @@ int loadTexture(Model *model,
     // first, fix backspaces:
     for (auto &c : fileName)
         if (c == '\\') c = '/';
-    fileName = modelPath+"/"+fileName;
+    if (fileName.empty() || fileName[0] != '/')
+        fileName = modelPath+"/"+fileName;
 
     owl::vec2i res;
     int   comp;
@@ -114,26 +117,55 @@ int loadTexture(Model *model,
     return textureID;
 }
 
-Model *loadOBJ(const std::string &objFile)
+static std::string parentDir(const std::string &path)
+{
+    size_t slash = path.find_last_of("/\\");
+    return slash == std::string::npos ? std::string(".") : path.substr(0, slash + 1);
+}
+
+Model *loadOBJ(const std::string &objFile,
+               const std::string &materialFile,
+               const std::string &textureFile)
 {
     Model *model = new Model;
 
-    const std::string modelDir = objFile.substr(0,objFile.rfind('/')+1);
+    const std::string modelDir = parentDir(objFile);
+    const std::string materialDir = materialFile.empty() ? modelDir : parentDir(materialFile);
 
     tinyobj::attrib_t attributes;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
+    std::vector<tinyobj::material_t> overrideMaterials;
     std::string err = "";
 
-    bool readOK
-    = tinyobj::LoadObj( &attributes,
-                        &shapes,
-                        &materials,
-                        &err,
-                        &err,
-                        objFile.c_str(),
-                        modelDir.c_str(),
-                        /* triangulate */true);
+    bool readOK = tinyobj::LoadObj( &attributes,
+                                    &shapes,
+                                    &materials,
+                                    &err,
+                                    &err,
+                                    objFile.c_str(),
+                                    modelDir.c_str(),
+                                    /* triangulate */true);
+    if (!materialFile.empty()) {
+        std::ifstream materialStream(materialFile);
+        if (!materialStream)
+            throw std::runtime_error("Could not read material file from "+materialFile);
+
+        std::map<std::string, int> materialMap;
+        std::string materialWarning;
+        std::string materialError;
+        tinyobj::LoadMtl(&materialMap,
+                         &overrideMaterials,
+                         &materialStream,
+                         &materialWarning,
+                         &materialError);
+        if (!materialWarning.empty())
+            std::cout << materialWarning << std::endl;
+        if (!materialError.empty())
+            std::cerr << materialError << std::endl;
+        if (!overrideMaterials.empty())
+            materials = overrideMaterials;
+    }
     if (!readOK)
         throw std::runtime_error("Could not read OBJ model from "+objFile+" : "+err);
 
@@ -167,15 +199,28 @@ Model *loadOBJ(const std::string &objFile)
                                addVertex(mesh, attributes, idx1, knownVertices),
                                addVertex(mesh, attributes, idx2, knownVertices));
                 mesh->index.push_back(idx);
-                if (materialID < 0) {
+                const int effectiveMaterialID = (materialID < 0 && materials.size() == 1) ? 0 : materialID;
+                if (effectiveMaterialID < 0) {
                     mesh->diffuse = owl::vec3f(1,0,0);
+                    mesh->specular = owl::vec3f(0.35f,0.35f,0.35f);
+                    mesh->shininess = 64.0f;
                     mesh->diffuseTextureID = -1;
                 } 
                 else {
-                    mesh->diffuse = (const owl::vec3f&)materials[materialID].diffuse;
+                    mesh->diffuse = (const owl::vec3f&)materials[effectiveMaterialID].diffuse;
+                    mesh->specular = (const owl::vec3f&)materials[effectiveMaterialID].specular;
+                    mesh->shininess = materials[effectiveMaterialID].shininess > 0.0f
+                                      ? materials[effectiveMaterialID].shininess
+                                      : 64.0f;
                     mesh->diffuseTextureID = loadTexture(model,
                                                          knownTextures,
-                                                         materials[materialID].diffuse_texname,
+                                                         textureFile.empty() ? materials[effectiveMaterialID].diffuse_texname : textureFile,
+                                                         textureFile.empty() ? materialDir : modelDir);
+                }
+                if (effectiveMaterialID < 0 && !textureFile.empty()) {
+                    mesh->diffuseTextureID = loadTexture(model,
+                                                         knownTextures,
+                                                         textureFile,
                                                          modelDir);
                 }
             }

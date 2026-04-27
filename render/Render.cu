@@ -31,6 +31,7 @@ struct PrimaryRayPayload
     glm::vec3   hitPosPrev; /* Same material point in previous-frame mesh/world coord. */
     int         primID;  /* Primitive id of the intersected face. */
     float       diffuse; /* Diffuse lambertian shading. */
+    glm::vec3   rgb;     /* Diffuse material color with lambertian shading. */
     float       depth;   /* Z-depth of intersection point. */
     glm::vec3   normal;  /* Surface normal of intersection point in camera space. */
 };
@@ -150,14 +151,28 @@ OPTIX_CLOSEST_HIT_PROGRAM(primary)()
     /* Transform normal to screen space. */
     glm::vec3 Ns = glm::normalize(glm::mat3(glm::inverse(optixLaunchParams.t_curr))*Nw);
 
-    /* Diffuse shading. */
+    /* Diffuse material color with simple lambertian shading. */
+    glm::vec3 materialColor(sbtData.color.x, sbtData.color.y, sbtData.color.z);
+    if (sbtData.hasTexture && sbtData.texcoord != nullptr) {
+        const owl::vec2f &Ta = sbtData.texcoord[index.x];
+        const owl::vec2f &Tb = sbtData.texcoord[index.y];
+        const owl::vec2f &Tc = sbtData.texcoord[index.z];
+        const owl::vec2f texcoord = w * Ta + barycentrics.x * Tb + barycentrics.y * Tc;
+        const float4 texel = tex2D<float4>(sbtData.texture, texcoord.x, texcoord.y);
+        materialColor = glm::vec3(texel.x, texel.y, texel.z);
+    }
     float diffuse = 0.1f + 0.9f*abs(dot(-1.f*Nw,dir));
+    float specularStrength = powf(abs(dot(Nw, -dir)), sbtData.shininess);
+    glm::vec3 specular(sbtData.specular.x, sbtData.specular.y, sbtData.specular.z);
 
     /* Store in ray payload. */
     prd.hitPos  = hitPos;
     prd.hitPosPrev = hitPosPrev;
     prd.primID  = primID;
     prd.diffuse = diffuse;
+    prd.rgb     = glm::clamp(materialColor * diffuse + specular * specularStrength,
+                             glm::vec3(0.0f),
+                             glm::vec3(1.0f));
     prd.depth   = depth;
     prd.normal  = Ns;
 }
@@ -188,6 +203,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
 
     /* Initialize output values. */
     float       diffuse     = 0.f;
+    glm::vec3   rgb         = glm::vec3(0.f);
     float       depth       = 0.f;
     glm::vec3   normals     = glm::vec3(-1);
     glm::vec2   flow        = glm::vec2(-20);
@@ -210,6 +226,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
     prd.hitPosPrev = glm::vec3(0.0f);
     prd.primID  = -1;
     prd.diffuse = 0.0f;
+    prd.rgb     = glm::vec3(0.0f);
     prd.depth   = 1.0f;
     prd.normal  = glm::vec3(0.0f);
 
@@ -221,6 +238,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
     {
         /* Diffuse shading. */
         diffuse = prd.diffuse;
+        rgb = prd.rgb;
 
         /* Depth. */
         if(optixLaunchParams.renderFlags & RenderFlags::DEPTH)
@@ -297,6 +315,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
     const uint32_t px_idx = px.x + px.y*optixLaunchParams.intrinsics.size.x;
 
     optixLaunchParams.fbDiffuse[px_idx] = owl::make_rgba(owl::vec3f(diffuse));
+    optixLaunchParams.fbRgb[px_idx] = owl::make_rgba(owl::vec3f(rgb.x, rgb.y, rgb.z));
 
     optixLaunchParams.fbDepth[px_idx] = (uint16_t)65535.f*(owl::clamp(depth / MAX_DEPTH,0.f,1.f));
 

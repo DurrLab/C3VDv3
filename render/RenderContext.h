@@ -42,6 +42,7 @@ class RenderContext
     public:
         /* Output frame buffers. */
         OWLBuffer fbDiffuse   = nullptr;
+        OWLBuffer fbRgb       = nullptr;
         OWLBuffer fbDepth     = nullptr;
         OWLBuffer fbNormals   = nullptr;
         OWLBuffer fbFlow      = nullptr;

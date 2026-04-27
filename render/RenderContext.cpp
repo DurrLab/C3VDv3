@@ -38,6 +38,7 @@ RenderContext::RenderContext(const Model *model, const Intrinsics &intrinsics)
         { "t_curr",         OWL_USER_TYPE(glm::mat4),   OWL_OFFSETOF(LaunchParams,t_curr)},
         { "t_prev",         OWL_USER_TYPE(glm::mat4),   OWL_OFFSETOF(LaunchParams,t_prev)},
         { "fbDiffuse",      OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,fbDiffuse)},
+        { "fbRgb",          OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,fbRgb)},
         { "fbDepth",        OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,fbDepth)},
         { "fbNormals",      OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,fbNormals)},
         { "fbFlow",         OWL_BUFPTR,                 OWL_OFFSETOF(LaunchParams,fbFlow)},
@@ -72,11 +73,13 @@ RenderContext::RenderContext(const Model *model, const Intrinsics &intrinsics)
 
     /* Create a buffer in device memory for each frame and initialize to 0 . */
     fbDiffuse   = owlDeviceBufferCreate(context,OWL_UINT4,intrinsics.size.x*intrinsics.size.y,nullptr);
+    fbRgb       = owlDeviceBufferCreate(context,OWL_UINT4,intrinsics.size.x*intrinsics.size.y,nullptr);
     fbDepth     = owlDeviceBufferCreate(context,OWL_UINT2,intrinsics.size.x*intrinsics.size.y,nullptr);
     fbNormals   = owlDeviceBufferCreate(context,OWL_USHORT4,intrinsics.size.x*intrinsics.size.y,nullptr);
     fbFlow      = owlDeviceBufferCreate(context,OWL_USHORT4,intrinsics.size.x*intrinsics.size.y,nullptr);
     fbOcclusion = owlDeviceBufferCreate(context,OWL_UINT,intrinsics.size.x*intrinsics.size.y,nullptr);
     owlBufferClear(fbDiffuse);
+    owlBufferClear(fbRgb);
     owlBufferClear(fbDepth);
     owlBufferClear(fbNormals);
     owlBufferClear(fbFlow);
@@ -92,6 +95,7 @@ RenderContext::RenderContext(const Model *model, const Intrinsics &intrinsics)
 
     /* Make buffers accessible through launch params. */
     owlParamsSetBuffer(launchParams,"fbDiffuse",    fbDiffuse);
+    owlParamsSetBuffer(launchParams,"fbRgb",        fbRgb);
     owlParamsSetBuffer(launchParams,"fbDepth",      fbDepth);
     owlParamsSetBuffer(launchParams,"fbNormals",    fbNormals);
     owlParamsSetBuffer(launchParams,"fbFlow",       fbFlow);
@@ -219,6 +223,8 @@ void RenderContext::buildAccel(void)
 
     OWLVarDecl triMeshVars[] = {
         { "color",      OWL_FLOAT3, OWL_OFFSETOF(TriangleMeshSBTData,color) },
+        { "specular",   OWL_FLOAT3, OWL_OFFSETOF(TriangleMeshSBTData,specular) },
+        { "shininess",  OWL_FLOAT,  OWL_OFFSETOF(TriangleMeshSBTData,shininess) },
         { "vertex",     OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,vertex) },
         { "vertexPrev", OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,vertexPrev) },
         { "normal",     OWL_BUFPTR, OWL_OFFSETOF(TriangleMeshSBTData,normal) },
@@ -287,6 +293,10 @@ void RenderContext::buildAccel(void)
 
         owlGeomSet3f(geom,"color",(const owl3f &)mesh.diffuse);
         owlGeomSet3f(geomPrev,"color",(const owl3f &)mesh.diffuse);
+        owlGeomSet3f(geom,"specular",(const owl3f &)mesh.specular);
+        owlGeomSet3f(geomPrev,"specular",(const owl3f &)mesh.specular);
+        owlGeomSet1f(geom,"shininess",mesh.shininess);
+        owlGeomSet1f(geomPrev,"shininess",mesh.shininess);
         if (mesh.diffuseTextureID >= 0) 
         {
             owlGeomSet1i(geom,"hasTexture",1);
