@@ -157,6 +157,22 @@ void RenderingModule::launch(void)
 {
     std::ofstream poseFile;
     poseFile.open(renderFolderPath + "pose.txt",std::ios_base::app);
+
+    FILE* worldVertexFile = fopen((renderFolderPath + "world_vertex_positions.bin").c_str(), "wb");
+    if (!worldVertexFile)
+    {
+        printf("\x1B[31mError: Could not open world_vertex_positions.bin for writing\x1B[0m\n");
+        exit(EXIT_FAILURE);
+    }
+
+    FILE* worldNormalFile = fopen((renderFolderPath + "world_vertex_normals.bin").c_str(), "wb");
+    if (!worldNormalFile)
+    {
+        fclose(worldVertexFile);
+        printf("\x1B[31mError: Could not open world_vertex_normals.bin for writing\x1B[0m\n");
+        exit(EXIT_FAILURE);
+    }
+
     mkdir(rgbFolderPath.c_str(), 0775);
 
     /* Iterate through each frame and render. */
@@ -164,10 +180,49 @@ void RenderingModule::launch(void)
     {
         /* Load deformed vertices for this frame. */
         std::vector<glm::vec3> deformedVertices = loadVertexPositions(n);
+
+        std::vector<float> worldVerticesFlat(deformedVertices.size() * 3);
+        for (size_t i = 0; i < deformedVertices.size(); ++i)
+        {
+            const glm::vec3 vWorld = glm::vec3(T_final * glm::vec4(deformedVertices[i], 1.0f));
+            worldVerticesFlat[3 * i + 0] = vWorld.x;
+            worldVerticesFlat[3 * i + 1] = vWorld.y;
+            worldVerticesFlat[3 * i + 2] = vWorld.z;
+        }
+
+        size_t worldVertexWriteCount = fwrite(worldVerticesFlat.data(), sizeof(float), worldVerticesFlat.size(), worldVertexFile);
+        if (worldVertexWriteCount != worldVerticesFlat.size())
+        {
+            fclose(worldVertexFile);
+            fclose(worldNormalFile);
+            printf("\x1B[31mError: Failed writing world_vertex_positions.bin at frame %d\x1B[0m\n", n);
+            exit(EXIT_FAILURE);
+        }
+
         context->updateVertexPositions(deformedVertices);
 
         /* Load deformed normals for this frame. */
         std::vector<glm::vec3> deformedNormals = loadVertexNormals(n);
+
+        glm::mat3 normalWorldMat = glm::transpose(glm::inverse(glm::mat3(T_final)));
+        std::vector<float> worldNormalsFlat(deformedNormals.size() * 3);
+        for (size_t i = 0; i < deformedNormals.size(); ++i)
+        {
+            const glm::vec3 nWorld = glm::normalize(normalWorldMat * deformedNormals[i]);
+            worldNormalsFlat[3 * i + 0] = nWorld.x;
+            worldNormalsFlat[3 * i + 1] = nWorld.y;
+            worldNormalsFlat[3 * i + 2] = nWorld.z;
+        }
+
+        size_t worldNormalWriteCount = fwrite(worldNormalsFlat.data(), sizeof(float), worldNormalsFlat.size(), worldNormalFile);
+        if (worldNormalWriteCount != worldNormalsFlat.size())
+        {
+            fclose(worldVertexFile);
+            fclose(worldNormalFile);
+            printf("\x1B[31mError: Failed writing world_vertex_normals.bin at frame %d\x1B[0m\n", n);
+            exit(EXIT_FAILURE);
+        }
+
         context->updateVertexNormals(deformedNormals);
 
         /* Update camera transform (current). */
@@ -250,6 +305,8 @@ void RenderingModule::launch(void)
     }
 
     poseFile.close();
+    fclose(worldVertexFile);
+    fclose(worldNormalFile);
 
     /* Save model with coverage texture. */
     cudaMemcpy(coverage_host, owlBufferGetPointer(context->coverage,0), model->meshes[0]->index.size(), cudaMemcpyDeviceToHost);
