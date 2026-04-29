@@ -87,6 +87,7 @@ class RenderingModule
         /* Config values. */
         std::vector<float> modelTransformR6;
         float poseStartTime;
+        bool worldInputMode;
 
         /* Image w/ no alpha device memory. */
         uint16_t *normalsNoAlpha_dev;

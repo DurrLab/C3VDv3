@@ -17,6 +17,9 @@ PoseLog::PoseLog( const std::string &filename)
     if (!file)
         throw std::runtime_error("Error: could not open pose file " + filename );
 
+    const float FPS = 29.97f;
+    int frameIndex = 0;
+
     while (!file.eof())
     {
         std::string line;
@@ -30,17 +33,42 @@ PoseLog::PoseLog( const std::string &filename)
 
         glm::mat4 T(1.0);
 
+        /* Try to parse 17 values (with timestamp). */
         int n = sscanf(line.c_str(), "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
-                        &time, 
+                        &time,
                         &T[0][0], &T[1][0], &T[2][0], &T[3][0],
                         &T[0][1], &T[1][1], &T[2][1], &T[3][1],
                         &T[0][2], &T[1][2], &T[2][2], &T[3][2],
                         &T[0][3], &T[1][3], &T[2][3], &T[3][3]);
 
-        if(n != 17)
-            throw std::runtime_error( "Error: " + filename + " is incorrectly formatted" );
+        if(n == 17)
+        {
+            /* Format with explicit timestamps. */
+            trajectory[time] = T;
+        }
+        else
+        {
+                /* Try parsing 16 values (matrix only, no timestamp).
+                    RenderingModule writes this format in column-major order:
+                    c0r0,c0r1,c0r2,c0r3,c1r0,...,c3r3 */
+                int m = sscanf(line.c_str(), "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
+                                    &T[0][0], &T[0][1], &T[0][2], &T[0][3],
+                                    &T[1][0], &T[1][1], &T[1][2], &T[1][3],
+                                    &T[2][0], &T[2][1], &T[2][2], &T[2][3],
+                                    &T[3][0], &T[3][1], &T[3][2], &T[3][3]);
 
-        trajectory[time] = T;
+            if(m == 16)
+            {
+                time = frameIndex / FPS;
+                trajectory[time] = T;
+            }
+            else
+            {
+                throw std::runtime_error( "Error: " + filename + " is incorrectly formatted (expected 16 or 17 values per line)" );
+            }
+        }
+
+        frameIndex++;
     }
 
     file.close();

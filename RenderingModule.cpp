@@ -50,7 +50,7 @@ RenderingModule::RenderingModule(int argc, char* argv[])
     Intrinsics intrinsics(width, height, cx, cy, a0, a1, a2, a3, a4, c, d, e);
 
     /* Handeye object. */
-    handeye = new Handeye(A_cal, B_cal, X);
+    handeye = worldInputMode ? nullptr : new Handeye(A_cal, B_cal, X);
 
     /* Mask. */
     mask = new Mask(pangolin::LoadImage(maskFilePath));
@@ -99,15 +99,21 @@ RenderingModule::RenderingModule(int argc, char* argv[])
                              | RenderFlags::OCCLUSION
                              | RenderFlags::COVERAGE);
 
-    /* Set the model transform to the ground truth. */
-    /* Can set to 0 */
-    glm::quat qx = glm::angleAxis((float)modelTransformR6[0],glm::vec3(1.0,0.0,0.0));
-    glm::quat qy = glm::angleAxis((float)modelTransformR6[1],glm::vec3(0.0,1.0,0.0));
-    glm::quat qz = glm::angleAxis((float)modelTransformR6[2],glm::vec3(0.0,0.0,1.0));
-    glm::quat q  = qz*qy*qx;
+    /* Set the model transform to the ground truth unless the inputs are already world-space. */
+    if (worldInputMode)
+    {
+        T_final = glm::mat4(1.0f);
+    }
+    else
+    {
+        glm::quat qx = glm::angleAxis((float)modelTransformR6[0],glm::vec3(1.0,0.0,0.0));
+        glm::quat qy = glm::angleAxis((float)modelTransformR6[1],glm::vec3(0.0,1.0,0.0));
+        glm::quat qz = glm::angleAxis((float)modelTransformR6[2],glm::vec3(0.0,0.0,1.0));
+        glm::quat q  = qz*qy*qx;
 
-    T_final = glm::mat4_cast(q);
-    T_final = glm::column(T_final,3,glm::vec4((float)modelTransformR6[3],(float)modelTransformR6[4],(float)modelTransformR6[5],1.0f));
+        T_final = glm::mat4_cast(q);
+        T_final = glm::column(T_final,3,glm::vec4((float)modelTransformR6[3],(float)modelTransformR6[4],(float)modelTransformR6[5],1.0f));
+    }
 
     context->updateMeshTransform(T_final);
 
@@ -227,14 +233,14 @@ void RenderingModule::launch(void)
 
         /* Update camera transform (current). */
         glm::mat4 A1_curr = poseLog->getTransform(n * (1.0f / FPS) + poseStartTime);
-        glm::mat4 B1_curr = handeye->A2B(A1_curr);
+        glm::mat4 B1_curr = worldInputMode ? A1_curr : handeye->A2B(A1_curr);
         context->updateCameraTransform(B1_curr,TransformFlags::CURRENT_TRANSFORM);
 
         /* Update camera transform (previous). */
         if(n>0)
         {
             glm::mat4 A1_prev = poseLog->getTransform((n-1) * (1.0f / FPS) + poseStartTime);
-            glm::mat4 B1_prev = handeye->A2B(A1_prev);
+            glm::mat4 B1_prev = worldInputMode ? A1_prev : handeye->A2B(A1_prev);
             context->updateCameraTransform(B1_prev,TransformFlags::PREVIOUS_TRANSFORM);
         }
 
@@ -333,11 +339,17 @@ void RenderingModule::loadParams(std::string filepath)
     d       = parser.aConfig<float>("d");
     e       = parser.aConfig<float>("e");
 
-    A_cal   = glm::make_mat4(parser.aConfigVec<float>("A_cal").data());
-    B_cal   = glm::make_mat4(parser.aConfigVec<float>("B_cal").data());
-    X       = glm::make_mat4(parser.aConfigVec<float>("X").data());
+    worldInputMode = parser.doesParamExist("worldInputMode") ? parser.aConfig<int>("worldInputMode") != 0 : false;
 
-    modelTransformR6 = parser.aConfigVec<float>("modelTransform");
+    if (!worldInputMode)
+    {
+        A_cal   = glm::make_mat4(parser.aConfigVec<float>("A_cal").data());
+        B_cal   = glm::make_mat4(parser.aConfigVec<float>("B_cal").data());
+        X       = glm::make_mat4(parser.aConfigVec<float>("X").data());
+
+        modelTransformR6 = parser.aConfigVec<float>("modelTransform");
+    }
+
     poseStartTime = parser.aConfig<float>("poseStartTime");
 
     materialFilePath = parser.doesParamExist("materialFile") ? parser.aConfig<std::string>("materialFile") : "";
@@ -491,7 +503,7 @@ void RenderingModule::writeOBJ(const std::string &filename,const Model *model,co
     {   
         auto v = mesh->vertex[i];
         
-        glm::vec3 v_tform = glm::vec3(T_final * glm::vec4(v.x,v.y,v.z,1.0));
+        glm::vec3 v_tform = glm::vec3(modelTransform * glm::vec4(v.x,v.y,v.z,1.0));
 
         modelFile << "v "
                   << v_tform.x << " "
