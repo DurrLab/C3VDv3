@@ -184,8 +184,19 @@ void RenderingModule::launch(void)
     /* Iterate through each frame and render. */
     for(int n = 0; n < numFrames; n++)
     {
-        /* Load deformed vertices for this frame. */
-        std::vector<glm::vec3> deformedVertices = loadVertexPositions(n);
+        /* Load deformed vertices for this frame, unless frozen for debugging. */
+        std::vector<glm::vec3> deformedVertices;
+        if (disableMeshUpdates)
+        {
+            const TriangleMesh *mesh = model->meshes[0];
+            deformedVertices.reserve(mesh->vertex.size());
+            for (const auto &v : mesh->vertex)
+                deformedVertices.push_back(glm::vec3(v.x, v.y, v.z));
+        }
+        else
+        {
+            deformedVertices = loadVertexPositions(n);
+        }
 
         std::vector<float> worldVerticesFlat(deformedVertices.size() * 3);
         for (size_t i = 0; i < deformedVertices.size(); ++i)
@@ -207,8 +218,19 @@ void RenderingModule::launch(void)
 
         context->updateVertexPositions(deformedVertices);
 
-        /* Load deformed normals for this frame. */
-        std::vector<glm::vec3> deformedNormals = loadVertexNormals(n);
+        /* Load deformed normals for this frame, unless frozen for debugging. */
+        std::vector<glm::vec3> deformedNormals;
+        if (disableMeshUpdates)
+        {
+            const TriangleMesh *mesh = model->meshes[0];
+            deformedNormals.reserve(mesh->normal.size());
+            for (const auto &normal : mesh->normal)
+                deformedNormals.push_back(glm::vec3(normal.x, normal.y, normal.z));
+        }
+        else
+        {
+            deformedNormals = loadVertexNormals(n);
+        }
 
         glm::mat3 normalWorldMat = glm::transpose(glm::inverse(glm::mat3(T_final)));
         std::vector<float> worldNormalsFlat(deformedNormals.size() * 3);
@@ -340,6 +362,7 @@ void RenderingModule::loadParams(std::string filepath)
     e       = parser.aConfig<float>("e");
 
     worldInputMode = parser.doesParamExist("worldInputMode") ? parser.aConfig<int>("worldInputMode") != 0 : false;
+    disableMeshUpdates = parser.doesParamExist("disableMeshUpdates") ? parser.aConfig<int>("disableMeshUpdates") != 0 : false;
 
     if (!worldInputMode)
     {

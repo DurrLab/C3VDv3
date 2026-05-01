@@ -88,6 +88,7 @@ class RenderingModule
         std::vector<float> modelTransformR6;
         float poseStartTime;
         bool worldInputMode;
+        bool disableMeshUpdates;
 
         /* Image w/ no alpha device memory. */
         uint16_t *normalsNoAlpha_dev;
