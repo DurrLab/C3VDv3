@@ -29,45 +29,42 @@ PoseLog::PoseLog( const std::string &filename)
         if(file.eof())
             break;
 
+        if(line.empty())
+            continue;
+
         float time;
 
         glm::mat4 T(1.0);
 
-        /* Try to parse 17 values (with timestamp). */
+        /* Parse timestamp plus pose in column-major order:
+           time,c0r0,c0r1,c0r2,c0r3,c1r0,...,c3r3 */
         int n = sscanf(line.c_str(), "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
                         &time,
-                        &T[0][0], &T[1][0], &T[2][0], &T[3][0],
-                        &T[0][1], &T[1][1], &T[2][1], &T[3][1],
-                        &T[0][2], &T[1][2], &T[2][2], &T[3][2],
-                        &T[0][3], &T[1][3], &T[2][3], &T[3][3]);
+                        &T[0][0], &T[0][1], &T[0][2], &T[0][3],
+                        &T[1][0], &T[1][1], &T[1][2], &T[1][3],
+                        &T[2][0], &T[2][1], &T[2][2], &T[2][3],
+                        &T[3][0], &T[3][1], &T[3][2], &T[3][3]);
 
         if(n == 17)
         {
-            /* Format with explicit timestamps. */
             trajectory[time] = T;
-        }
-        else
-        {
-                /* Try parsing 16 values (matrix only, no timestamp).
-                    RenderingModule writes this format in column-major order:
-                    c0r0,c0r1,c0r2,c0r3,c1r0,...,c3r3 */
-                int m = sscanf(line.c_str(), "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
-                                    &T[0][0], &T[0][1], &T[0][2], &T[0][3],
-                                    &T[1][0], &T[1][1], &T[1][2], &T[1][3],
-                                    &T[2][0], &T[2][1], &T[2][2], &T[2][3],
-                                    &T[3][0], &T[3][1], &T[3][2], &T[3][3]);
-
-            if(m == 16)
-            {
-                time = frameIndex / FPS;
-                trajectory[time] = T;
-            }
-            else
-            {
-                throw std::runtime_error( "Error: " + filename + " is incorrectly formatted (expected 16 or 17 values per line)" );
-            }
+            frameIndex++;
+            continue;
         }
 
+        /* Parse pose in column-major order without an explicit timestamp.
+           The timestamp is inferred from line order at 29.97 FPS. */
+        int m = sscanf(line.c_str(), "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
+                        &T[0][0], &T[0][1], &T[0][2], &T[0][3],
+                        &T[1][0], &T[1][1], &T[1][2], &T[1][3],
+                        &T[2][0], &T[2][1], &T[2][2], &T[2][3],
+                        &T[3][0], &T[3][1], &T[3][2], &T[3][3]);
+
+        if(m != 16)
+            throw std::runtime_error( "Error: " + filename + " is incorrectly formatted (expected either 16 column-major pose values, or 17 values with leading timestamp)" );
+
+        time = frameIndex / FPS;
+        trajectory[time] = T;
         frameIndex++;
     }
 
@@ -86,19 +83,17 @@ glm::mat4 PoseLog::getTransform(const float &timestamp)
     if( !(timestamp >= getBeginTime()  &&  timestamp <= getEndTime()) )
         throw std::runtime_error( "The requsted pose time is not within bounds." );
 
-    /* Lower bound pose. */
-    std::map<float, glm::mat4>::const_iterator it0 = trajectory.lower_bound(timestamp);
+    std::map<float, glm::mat4>::const_iterator it1 = trajectory.lower_bound(timestamp);
+
+    if(it1 != trajectory.end() && it1->first == timestamp)
+        return it1->second;
+
+    std::map<float, glm::mat4>::const_iterator it0 = std::prev(it1);
+
     float t0 = it0->first;
     glm::mat4 v0 = it0->second;
-
-    /* Upper bound pose. */
-    std::map<float, glm::mat4>::const_iterator it1 = trajectory.upper_bound(timestamp);
     float t1 = it1->first;
     glm::mat4 v1 = it1->second;
-
-    /* If entries are the same. */
-    if(t0==t1)
-        return v0;
 
     /* Return a weighted linear interpolation of the two closest poses. */
     float w = (timestamp-t0)/(t1-t0);
