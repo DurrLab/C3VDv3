@@ -19,6 +19,7 @@
 
 #define MAX_DEPTH   100.0f
 #define MAX_FLOW    20.0f
+#define MIN_OCCLUSION_SEPARATION 0.5f
 
 extern "C" __constant__ LaunchParams optixLaunchParams;
 
@@ -289,7 +290,7 @@ OPTIX_RAYGEN_PROGRAM(render)()
         /* Occlusion. */
         if(optixLaunchParams.renderFlags & RenderFlags::OCCLUSION)
         {
-            OcclusionRay ray_occ(make_float3(prd.hitPos + rayDirWorld*1.0e-4f),make_float3(rayDirWorld),1e-5f,1e4f);
+            OcclusionRay ray_occ(make_float3(prd.hitPos),make_float3(rayDirWorld),MIN_OCCLUSION_SEPARATION,MAX_DEPTH);
 
             OcclusionRayPayload prd_occ;
             prd_occ.hitPos = glm::vec3(0.0);
@@ -297,8 +298,13 @@ OPTIX_RAYGEN_PROGRAM(render)()
 
             owl::traceRay(optixLaunchParams.traversableCurr, ray_occ, prd_occ, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
 
-            /* If intersected and within the max depth. */
-            if(prd_occ.primID!=-1 && (glm::vec3(optixLaunchParams.t_curr*glm::vec4(prd_occ.hitPos,1.0)).z <= 100.0))
+            const float occlusionDistance = glm::dot(prd_occ.hitPos - prd.hitPos, rayDirWorld);
+
+            /* If another surface is hit after a real separation from the front surface. */
+            if(prd_occ.primID != -1 &&
+               prd_occ.primID != prd.primID &&
+               occlusionDistance >= MIN_OCCLUSION_SEPARATION &&
+               occlusionDistance <= MAX_DEPTH)
                 occlusion = 1;
         }
 
