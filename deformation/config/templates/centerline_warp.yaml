@@ -1,0 +1,57 @@
+geometry: c0_transverse_t3_v2
+reference_dir: /path/to/c0_transverse_t3_v2
+centerline_path: /path/to/c0_transverse_t3_v2.npy
+c3vd_input_path: /path/to/c3vd_input_root
+enable_gaussian: false
+enable_centerline_warp: true
+
+# ============ TRANSFORM MODES ============
+# Choose one of: shift, linear_shift, warp, exp_tail_warp
+
+# --- SHIFT (constant displacement) ---
+# transform_mode: shift
+# transform_params:
+#   direction: [0, 1, 0]  # or "auto" for PCA dominant transverse axis
+#   distance: 5.0         # displacement amount in units
+
+# --- LINEAR_SHIFT (displacement linearly tapered) ---
+# transform_mode: linear_shift
+# transform_params:
+#   direction: [0, 1, 0]  # or "auto"
+#   distance: 5.0
+#   fixed_end: "start"    # or "end" - which end stays fixed
+
+# --- WARP (half-wave sinusoidal peristalsis) ---
+# transform_mode: warp
+# transform_params:
+#   amplitude: 8.0        # peak displacement
+#   phase: 0.0            # initial phase offset
+#   axis: [0, 1, 0]       # or "auto" for PCA dominant transverse axis
+
+# --- EXP_TAIL_WARP (exponential tail deformation) ---
+# transform_mode: exp_tail_warp
+# transform_params:
+#   amplitude: 8.0        # peak displacement
+#   axis: [0, 1, 0]       # or "auto"
+#   sharpness: 5.0        # exponential curve steepness
+#   start_fraction: 0.05  # where warp begins (0.0-1.0 along centerline)
+
+# Active Config
+transform_mode: warp
+transform_params:
+  amplitude: 8.0
+  axis: auto
+  phase: 0.0
+
+fps: 30
+save_new_centerline: true
+debug_vertex_bounds: false
+
+# Mesh processing parameters (optional, defaults shown)
+taubin_iterations: 12
+subdivision_iterations: 0
+
+# Vertex smoothing parameters (optional, defaults shown)
+smooth_vertex_s: true
+vertex_s_smooth_iterations: 24
+vertex_s_smooth_lambda: 0.55
