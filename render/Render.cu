@@ -20,6 +20,7 @@
 #define MAX_DEPTH   100.0f
 #define MAX_FLOW    20.0f
 #define MIN_OCCLUSION_SEPARATION 0.5f
+#define FLOW_MATCH_TOLERANCE 1.0f
 
 extern "C" __constant__ LaunchParams optixLaunchParams;
 
@@ -280,9 +281,12 @@ OPTIX_RAYGEN_PROGRAM(render)()
 
                 owl::traceRay(optixLaunchParams.traversablePrev, ray_prev, prd_prev, OPTIX_RAY_FLAG_DISABLE_ANYHIT);
 
-                /*  If the intersection primitive id matches, then 
-                    it is not occluded -> save the flow. */
-                if(prd.primID == prd_prev.primID)
+                /*  Preserve flow when previous-frame ray hits the same surface.
+                    Exact primitive-id matches can fail on triangle boundaries,
+                    so also allow near-identical world-space hits. */
+                const float prevHitError = glm::length(prd_prev.hitPos - prd.hitPosPrev);
+                if(prd_prev.primID != -1 &&
+                   (prd.primID == prd_prev.primID || prevHitError <= FLOW_MATCH_TOLERANCE))
                     flow = px_prev - px;        
             }
         }
