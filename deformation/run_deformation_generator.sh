@@ -85,7 +85,7 @@ run_generator_for_config() {
   python -u "$REPO_ROOT/deformation/scripts/$generator_script" --config "$config_path"
 
   echo "Copying c3vd input files for $config_stem"
-  python -u "$REPO_ROOT/deformation/scripts/copy_files_from_root.py" --config "$config_path"
+  python -u "$REPO_ROOT/deformation/scripts/copy_files_from_reference.py" --config "$config_path"
 
   if [[ ! -d "$C3VD_PROJECT_DIR/build" ]]; then
     echo "ERROR: missing c3vd build directory: $C3VD_PROJECT_DIR/build" >&2

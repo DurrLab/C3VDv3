@@ -102,7 +102,19 @@ Rendered ground truth files are saved in the *render* folder.
 
 ### 3D Colon Deformation
 
-This repository includes a deformation generation workflow for simulating colon deformations (e.g., peristalsis, polyp compression) and rendering them with the C3VD registration framework. The pipeline is controlled through YAML configuration files and supports two deformation types: **Gaussian** (wave-based) and **centerline-based warping**.
+This repository includes a deformation generation workflow for simulating colon deformations and rendering them with the C3VD framework. Note: An existing C3VD rendered output is recommended before running the deformation pipeline and should have the minimal following structure:
+
+```bash
+.
+└── reference_dir/       # reference directory for the given video sequences
+    ├── rgb/          # rgb image folder
+    │   ├── 0000.png         
+    │   ├── 0001.png
+    │   │   ...
+    │   └── N-1.png
+    ├── coverage_mesh.obj    # Undeformed Reference Mesh
+    └── pose.txt     #  4×4 homogeneous transformation matrix in row-major format
+```
 
 #### Setup
 
@@ -120,9 +132,9 @@ Create a YAML config file for your deformation. Two template configs are provide
 Use this for simulating peristaltic waves or other wave-based deformations:
 
 ```yaml
-geometry: my_geometry_name
-reference_dir: /path/to/reference/mesh/directory
-centerline_path: /path/to/geometry.npy
+geometry: c3vd_or_c3vdv2_geometry
+reference_dir: /path/to/reference/contents
+centerline_path: /path/to/extracted/centerline.npy
 output_root: /path/to/output_root
 
 enable_gaussian: true
@@ -132,7 +144,7 @@ waves:
   - A: 0.6                    # amplitude (mm)
     sigma_frac: 0.10          # gaussian width as fraction of centerline length
     velocity_cm_s: 2.0        # wave propagation speed (cm/s)
-    start_delay_s: 0.0        # when the wave starts (seconds)
+    start_delay_s: 0.0        # delay before the wave starts (seconds)
 
 fps: 29.97
 taubin_iterations: 12         # mesh smoothing iterations
@@ -142,9 +154,9 @@ subdivision_iterations: 0     # mesh subdivision
 **Centerline-based Warp**
 
 ```yaml
-geometry: my_geometry_name
-reference_dir: /path/to/reference/mesh/directory
-centerline_path: /path/to/geometry.npy
+geometry: c3vd_or_c3vdv2_geometry
+reference_dir: /path/to/reference/contents
+centerline_path: /path/to/extracted/centerline.npy
 output_root: /path/to/output_root
 
 enable_gaussian: false
@@ -156,14 +168,14 @@ transform_params:
   axis: auto                     # or [x, y, z] direction vector
   phase: 0.0                     # initial phase offset
 
-fps: 30
+fps: 29.97
 save_new_centerline: true
 taubin_iterations: 12
 ```
 
 **Required Fields:**
 - `geometry`: A unique identifier for this deformation (used in output naming)
-- `reference_dir`: Path to the original mesh directory (should contain `model.obj`, `model.mtl`, etc.)
+- `reference_dir`: Path to the original mesh directory (should contain `rgb/`, `coverage_mesh.obj`, `pose.txt`)
 - `centerline_path`: Path to the centerline NumPy file (`.npy` format, shape [N, 3])
 - `output_root`: Root output directory where results are written
 
@@ -191,9 +203,16 @@ The script will:
 Results are organized as:
 ```
 <c3vd_input_path>/<geometry>/
-├── model.obj, model.mtl         # deformed mesh (frame 0)
-├── vertex_positions.bin          # per-frame vertex positions (binary)
-├── depth/, normals/, etc.        # rendered ground truth
+├── render/
+│   ├── depth/
+│   ├── diffuse/  
+│   ├── normals/
+│   ├── occlusion/
+│   ├── optical_flow/ 
+│   ├── coverage_mesh.obj                   
+│   ├── pose.txt                            
+│   ├── world_vertex_positions.bin          # per-frame vertex positions in world coordinates (binary)
+│   ├── world_vertex_normals.bin            # per-frame vertex normals inworld coordinates (binary)
 ├── render_comparison/            # error metrics vs. reference
 └── config.yaml                   # copy of the config used
 ```

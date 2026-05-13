@@ -9,7 +9,7 @@ import os
 import yaml
 
 
-REQUIRED_REFERENCE_FILES = ("pose.txt",)
+REQUIRED_REFERENCE_FILES = ("pose.txt")
 MASK_SOURCE = Path(__file__).resolve().parents[1] / "utils" / "mask.png"
 CONFIG_INI_SOURCE = Path(__file__).resolve().parents[1] / "utils" / "config.ini"
 

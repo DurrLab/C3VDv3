@@ -2,33 +2,33 @@ geometry: c0_transverse_t3_v2
 reference_dir: /path/to/c0_transverse_t3_v2
 centerline_path: /path/to/c0_transverse_t3_v2.npy
 output_root: /path/to/output_root
+
 enable_gaussian: false
 enable_centerline_warp: true
 
-# ============ TRANSFORM MODES ============
 # Choose one of: shift, linear_shift, warp, exp_tail_warp
 
-# --- SHIFT (constant displacement) ---
+# --- Shift ---
 # transform_mode: shift
 # transform_params:
 #   direction: [0, 1, 0]  # or "auto" for PCA dominant transverse axis
 #   distance: 5.0         # displacement amount in units
 
-# --- LINEAR_SHIFT (displacement linearly tapered) ---
+# --- Linear Shift ---
 # transform_mode: linear_shift
 # transform_params:
 #   direction: [0, 1, 0]  # or "auto"
 #   distance: 5.0
 #   fixed_end: "start"    # or "end" - which end stays fixed
 
-# --- WARP (half-wave sinusoidal peristalsis) ---
+# --- Warp ---
 # transform_mode: warp
 # transform_params:
 #   amplitude: 8.0        # peak displacement
 #   phase: 0.0            # initial phase offset
 #   axis: [0, 1, 0]       # or "auto" for PCA dominant transverse axis
 
-# --- EXP_TAIL_WARP (exponential tail deformation) ---
+# --- Exp TailWarp ---
 # transform_mode: exp_tail_warp
 # transform_params:
 #   amplitude: 8.0        # peak displacement

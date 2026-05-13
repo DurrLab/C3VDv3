@@ -1,7 +1,8 @@
 geometry: c0_transverse_t3_v2
 reference_dir: /path/to/c0_transverse_t3_v2
 centerline_path: /path/to/c0_transverse_t3_v2.npy
-output_root: /path/to/output_root
+output_path: /path/to/output_root
+
 enable_gaussian: true
 enable_centerline_warp: false
 
