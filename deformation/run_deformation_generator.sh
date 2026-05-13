@@ -45,7 +45,7 @@ run_generator_for_config() {
   local config_path="$1"
   local config_name
   local config_stem
-  local c3vd_input_path
+  local output_root
   local enable_gaussian
   local enable_centerline_warp
   local generator_script
@@ -53,13 +53,13 @@ run_generator_for_config() {
 
   config_name="$(basename "$config_path")"
   config_stem="${config_name%.*}"
-  c3vd_input_path="$(read_value_from_config "$config_path" "c3vd_input_path" || true)"
-  if [[ -z "$c3vd_input_path" ]]; then
-    echo "ERROR: missing c3vd_input_path in $config_name" >&2
+  output_root="$(read_value_from_config "$config_path" "output_root" || true)"
+  if [[ -z "$output_root" ]]; then
+    echo "ERROR: missing output_root in $config_name" >&2
     exit 1
   fi
 
-  output_dir="$c3vd_input_path/$config_stem"
+  output_dir="$output_root/$config_stem"
 
   enable_gaussian="$(read_value_from_config "$config_path" "enable_gaussian" || true)"
   enable_centerline_warp="$(read_value_from_config "$config_path" "enable_centerline_warp" || true)"

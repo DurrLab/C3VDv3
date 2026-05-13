@@ -39,14 +39,14 @@ def load_config(config_path):
 
 
 def resolve_roots_from_config(config, config_path):
-    missing = [k for k in ("geometry", "reference_dir", "c3vd_input_path") if config.get(k) is None]
+    missing = [k for k in ("geometry", "reference_dir", "output_root") if config.get(k) is None]
     if missing:
         raise RuntimeError(f"Missing required config keys: {', '.join(missing)}")
 
     geometry = str(config["geometry"])
     config_stem = Path(config_path).stem
     reference_dir = Path(str(config["reference_dir"]))
-    c3vd_input_path = Path(str(config["c3vd_input_path"]))
+    output_root_path = Path(str(config["output_root"]))
 
     # reference_dir is expected to be relative to ORIGINAL_PATH, matching other scripts.
     if reference_dir.is_absolute():
@@ -54,8 +54,8 @@ def resolve_roots_from_config(config, config_path):
     else:
         reference_root = Path(ORIGINAL_PATH) / reference_dir / "render"
 
-    target_root = c3vd_input_path / config_stem / "render"
-    output_root = c3vd_input_path / config_stem / "render_comparison"
+    target_root = output_root_path / config_stem / "render"
+    output_root = output_root_path / config_stem / "render_comparison"
     return geometry, reference_root, target_root, output_root
 
 

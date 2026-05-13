@@ -486,7 +486,7 @@ def main():
     )
 
     output_dir = (
-        Path(str(config.get("c3vd_input_path"))) / config_stem
+        Path(str(config.get("output_root"))) / config_stem
     )
 
     print(f"\n=== Processing geometry: {geometry} ===")

@@ -49,7 +49,7 @@ MATERIAL_PRESETS = [
 
 def parse_args():
 	parser = argparse.ArgumentParser(
-		description="Copy fixed reference files from reference_dir to c3vd_input_path/<config_stem>."
+		description="Copy fixed reference files from reference_dir to output_root/<config_stem>."
 	)
 	parser.add_argument("--config", required=True, help="Path to YAML config")
 	parser.add_argument(
@@ -66,7 +66,7 @@ def load_config(config_path: Path) -> dict:
 	if not isinstance(config, dict):
 		raise ValueError(f"Config must be a YAML mapping: {config_path}")
 
-	for key in ("geometry", "reference_dir", "c3vd_input_path"):
+	for key in ("geometry", "reference_dir", "output_root"):
 		if config.get(key) is None:
 			raise ValueError(f"Missing required config key: {key}")
 	return config

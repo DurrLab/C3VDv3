@@ -82,7 +82,7 @@ def resolve_reference_dir(config):
 
 
 def resolve_output_dir(config, config_stem):
-    return require_config_path(config, "c3vd_input_path") / config_stem
+    return require_config_path(config, "output_root") / config_stem
 
 
 def resolve_centerline_path(config):

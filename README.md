@@ -100,6 +100,114 @@ Update the modelTransform parameter in the configuration file to the result from
 ```
 Rendered ground truth files are saved in the *render* folder.
 
+### 3D Colon Deformation
+
+This repository includes a deformation generation workflow for simulating colon deformations (e.g., peristalsis, polyp compression) and rendering them with the C3VD registration framework. The pipeline is controlled through YAML configuration files and supports two deformation types: **Gaussian** (wave-based) and **centerline-based warping**.
+
+#### Setup
+
+Install the Python dependencies for the deformation scripts with:
+```
+python -m pip install -r deformation/requirements.txt
+```
+
+#### Configuration
+
+Create a YAML config file for your deformation. Two template configs are provided in [deformation/config/templates/](deformation/config/templates/):
+
+**Gaussian Deformation (Waves)**
+
+Use this for simulating peristaltic waves or other wave-based deformations:
+
+```yaml
+geometry: my_geometry_name
+reference_dir: /path/to/reference/mesh/directory
+centerline_path: /path/to/geometry.npy
+output_root: /path/to/output_root
+
+enable_gaussian: true
+enable_centerline_warp: false
+
+waves:
+  - A: 0.6                    # amplitude (mm)
+    sigma_frac: 0.10          # gaussian width as fraction of centerline length
+    velocity_cm_s: 2.0        # wave propagation speed (cm/s)
+    start_delay_s: 0.0        # when the wave starts (seconds)
+
+fps: 29.97
+taubin_iterations: 12         # mesh smoothing iterations
+subdivision_iterations: 0     # mesh subdivision
+```
+
+**Centerline-based Warp**
+
+```yaml
+geometry: my_geometry_name
+reference_dir: /path/to/reference/mesh/directory
+centerline_path: /path/to/geometry.npy
+output_root: /path/to/output_root
+
+enable_gaussian: false
+enable_centerline_warp: true
+
+transform_mode: warp             # or: shift, linear_shift, exp_tail_warp
+transform_params:
+  amplitude: 8.0                 # peak displacement (mm)
+  axis: auto                     # or [x, y, z] direction vector
+  phase: 0.0                     # initial phase offset
+
+fps: 30
+save_new_centerline: true
+taubin_iterations: 12
+```
+
+**Required Fields:**
+- `geometry`: A unique identifier for this deformation (used in output naming)
+- `reference_dir`: Path to the original mesh directory (should contain `model.obj`, `model.mtl`, etc.)
+- `centerline_path`: Path to the centerline NumPy file (`.npy` format, shape [N, 3])
+- `output_root`: Root output directory where results are written
+
+#### Running the Generator
+
+Run the deformation pipeline with a single config:
+```bash
+cd /path/to/C3VD_deformation
+./deformation/run_deformation_generator.sh --config deformation/config/my_config.yaml
+```
+
+Or process all configs in a directory:
+```bash
+./deformation/run_deformation_generator.sh --config-dir deformation/config/
+```
+
+The script will:
+1. Generate the deformed geometry mesh
+2. Copy required input files (RGB, edges, mask, pose log) from the reference
+3. Run the C3VD renderer on the deformed sequence
+4. Compute render error metrics
+
+#### Output Structure
+
+Results are organized as:
+```
+<c3vd_input_path>/<geometry>/
+├── model.obj, model.mtl         # deformed mesh (frame 0)
+├── vertex_positions.bin          # per-frame vertex positions (binary)
+├── depth/, normals/, etc.        # rendered ground truth
+├── render_comparison/            # error metrics vs. reference
+└── config.yaml                   # copy of the config used
+```
+
+#### Preview (Optional)
+
+Before running the full pipeline, preview the deformation with:
+```bash
+python deformation/scripts/preview_gaussian.py --config deformation/config/my_config.yaml
+python deformation/scripts/preview_centerline_warp.py --config deformation/config/my_config.yaml
+```
+
+These scripts visualize the mesh deformation in real-time using Open3D.
+
 ## Sample Video Sequence
 A sample raw video sequence from the dataset is available for download [HERE](https://drive.google.com/file/d/1Ddeq5Dm4tx7cMRTZBu3CN3otsGu2_kY1/view?usp=sharing). Once uncompressed, the folder is ready to be run by the programs.
 

@@ -217,7 +217,7 @@ def main():
     config_stem = Path(args.config).stem
     fps = float(config.get("fps", 30))
 
-    output_dir = Path(str(config.get("c3vd_input_path"))) / config_stem
+    output_dir = Path(str(config.get("output_root"))) / config_stem
     mesh, frame_vertices = load_export(output_dir)
 
     geometry = str(config["geometry"])
