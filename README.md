@@ -2,8 +2,8 @@
 
 <table>
     <tr>
-        <td><img src="assets/c0_cecum_t4_v2_16.gif" alt="gif 1" width="100%" /></td>
-        <td><img src="assets/c2_sigmoid_p2_v1_16.gif" alt="gif 2" width="100%" /></td>
+        <td><img src="assets/c2_sigmoid_p2_v1_16.gif" alt="gif 1" width="100%" /></td>
+        <td><img src="assets/c0_cecum_t4_v2_16.gif" alt="gif 2" width="100%" /></td>
         <td><img src="assets/c2_trans2_p3_v2_16.gif" alt="gif 3" width="100%" /></td>
         <td><img src="assets/c2_trans1_p1_v1_16.gif" alt="gif 4" width="100%" /></td>
     </tr>
@@ -11,6 +11,9 @@
 
 This repository contains the rendering code used in *Colonoscopy 3D deformable video dataset with paired depth from 2D-3D registration and sim2real*. Visit the [project webpage](https://durrlab.github.io/C3VD/) to learn more about this work.
 
+<video autoplay loop muted playsinline width="100%">
+  <source src="assets/aligned_prev_final.mp4" type="video/mp4">
+</video>
 
 
 ## Prerequisites
