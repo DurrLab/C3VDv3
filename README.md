@@ -1,4 +1,4 @@
-# Colonoscopy 3D video dataset with paired depth from 2D-3D registration
+# Colonoscopy 3D deformable video dataset with paired depth from 2D-3D registration and sim2real
 
 ![banner](https://durrlab.github.io/C3VD/assets/img/sample.gif)
 
