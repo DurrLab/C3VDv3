@@ -205,11 +205,12 @@ These scripts visualize the mesh deformation in real-time using Open3D.
 ## Sample Video Sequence
 A sample raw video sequence from the dataset is available for download [HERE](https://drive.google.com/file/d/1Ddeq5Dm4tx7cMRTZBu3CN3otsGu2_kY1/view?usp=sharing). Once uncompressed, the folder is ready to be run by the programs.
 
+<!-- 
 ## Reference
 If you find our work useful in your research, please consider citing our paper:
 ```
 placeholder
 ```
-
+-->
 ## License
-This work is licensed under CC BY-NC-SA 4.0
+This work is licensed under CC BY 4.0
