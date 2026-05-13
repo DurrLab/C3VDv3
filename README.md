@@ -11,9 +11,7 @@
 
 This repository contains the rendering code used in *Colonoscopy 3D deformable video dataset with paired depth from 2D-3D registration and sim2real*. Visit the [project webpage](https://durrlab.github.io/C3VD/) to learn more about this work.
 
-<video autoplay loop muted playsinline width="100%">
-  <source src="assets/aligned_prev_final.mp4" type="video/mp4">
-</video>
+<img src="assets/aligned_prev_final.gif" alt="aligned review preview" width="100%" />
 
 
 ## Prerequisites
