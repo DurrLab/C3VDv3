@@ -1,15 +1,17 @@
-# Colonoscopy 3D deformable video dataset with paired depth from 2D-3D registration and sim2real
+# C3VD-DEFCOL - Colonoscopy 3D deformable video dataset with paired depth and sim2real
 
 <table>
     <tr>
         <td><img src="assets/c2_sigmoid_p2_v1_16.gif" alt="gif 1" width="100%" /></td>
         <td><img src="assets/c0_cecum_t4_v2_16.gif" alt="gif 2" width="100%" /></td>
+    </tr>
+    <tr>
         <td><img src="assets/c2_trans2_p3_v2_16.gif" alt="gif 3" width="100%" /></td>
         <td><img src="assets/c2_trans1_p1_v1_16.gif" alt="gif 4" width="100%" /></td>
     </tr>
 </table>
 
-This repository contains the rendering code used in *Colonoscopy 3D deformable video dataset with paired depth from 2D-3D registration and sim2real*. Visit the [project webpage](https://durrlab.github.io/C3VD/) to learn more about this work.
+This repository contains the rendering code used in *Colonoscopy 3D deformable video dataset with paired depth and sim2real*.
 
 <img src="assets/aligned_prev_final.gif" alt="aligned review preview" width="100%" />
 
@@ -201,7 +203,7 @@ python deformation/scripts/preview_centerline_warp.py --config deformation/confi
 These scripts visualize the mesh deformation in real-time using Open3D.
 
 ## Sample Video Sequence
-A sample raw video sequence from the dataset is available for download [HERE](https://drive.google.com/file/d/1Ddeq5Dm4tx7cMRTZBu3CN3otsGu2_kY1/view?usp=sharing). Once uncompressed, the folder is ready to be run by the programs.
+A sample raw video sequence from the dataset is available for download `Placeholder`. Once uncompressed, the folder is ready to be run by the programs.
 
 <!-- 
 ## Reference
