@@ -13,7 +13,7 @@
 
 This repository contains the rendering code used in *Colonoscopy 3D deformable video dataset with paired depth and sim2real*.
 
-# ArXiv Link : [https://arxiv.org/abs/2606.07891](https://arxiv.org/abs/2606.07891) | Dataset : COMING SOON
+### ArXiv Link : [https://arxiv.org/abs/2606.07891](https://arxiv.org/abs/2606.07891) | Dataset : COMING SOON
 
 <img src="assets/aligned_prev_final.gif" alt="aligned review preview" width="100%" />
 
