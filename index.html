@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>C3VD</title>
+    <title>C3VD-DEFCOL: A Deformable Colonoscopy Dataset with Time-Resolved 3D Ground Truth and Realistic Appearance</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/before-after.compiled.css">
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -21,42 +21,444 @@
     <div class="container" style="margin-top: 0px;">
         <div class="row justify-content-center" style="margin-top: 15px;margin-bottom: 15px;">
             <div class="col-9">
-                <h1 class="text-center">Colonoscopy 3D Video Dataset (C3VD)</h1>
-                <p class="text-center" style="margin: -10px;margin-bottom: 0px;"><em>from Colonoscopy 3D Video Dataset with Paired Depth from 2D-3D Registration</em><br></p>
+                <h1 class="text-center">C3VD-DEFCOL: A Deformable Colonoscopy Dataset with Time-Resolved 3D Ground Truth and Realistic Appearance</h1>
                 <div class="row text-center justify-content-center">
-                    <div class="col-4"><a href="https://scholar.google.com/citations?user=y8RsSRwAAAAJ&amp;hl=en">Taylor L. Bobrow</a></div>
-                    <div class="col-4"><a href="https://scholar.google.com/citations?user=FjX3JAEAAAAJ">Mayank Golhar</a></div>
-                    <div class="col-4"><a href="https://scholar.google.com/citations?hl=en&amp;user=YA_gt5EAAAAJ">Rohan Vijayan</a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=DcQV-ZoAAAAJ&hl=en">Ethan Luk<sup>1</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=FjX3JAEAAAAJ">Mayank V. Golhar<sup>1</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=TLpqee4AAAAJ&hl=en&oi=ao">Anthony Song<sup>1</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=tqubbHoAAAAJ&hl=en&oi=sra">Raúl Iranzo<sup>2</sup></a></div>
+
                 </div>
                 <div class="row text-center justify-content-center">
-                    <div class="col-4"><a href="https://scholar.google.com/citations?hl=en&amp;user=a3eRS3sAAAAJ">Venkata S. Akshintala</a></div>
-                    <div class="col-4"><a href="https://scholar.google.com/citations?user=AdiG_IAAAAAJ&amp;hl=en&amp;oi=sra">Juan R. Garcia</a></div>
-                    <div class="col-4"><a href="https://scholar.google.com/citations?user=AdhZfSkAAAAJ&amp;hl=en">Nicholas J. Durr</a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=a0yLLFYAAAAJ&hl=en&oi=sra">Víctor M. Batlle<sup>2</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=btxQyh8AAAAJ&hl=en&oi=sra">Lalithkumar Seenivasan<sup>3</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?hl=en&user=D99JRxwAAAAJ">José M.M. Montiel<sup>2</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=AdhZfSkAAAAJ&amp;hl=en">Nicholas J. Durr<sup>1</sup></a></div>
                 </div>
+
+                
+
                 <div class="row">
                     <div class="col">
-                        <p class="text-center" style="margin-bottom: 0px;">Johns Hopkins University</p>
+                        <p class="text-center" style="margin-bottom: 0px;">
+                            <sup>1</sup>Department of Biomedical Engineering, Johns Hopkins University, Baltimore, MD, USA
+                        </p>
+                        <p class="text-center" style="margin-bottom: 0px;">
+                            <sup>2</sup>Instituto de Investigación en Ingeniería de Aragón (I3A), Universidad de Zaragoza, Zaragoza, Spain
+                        </p>
+                        <p class="text-center" style="margin-bottom: 0px;">
+                            <sup>3</sup>Department of Computer Science, Johns Hopkins University, Baltimore, MD, USA
+                        </p>
                     </div>
                 </div>
+
+                 <!-- Navigation Menu -->
+                 <nav class="nav justify-content-center mb-4">
+                    <a class="nav-link" href="#whats-new">What's New?</a>
+                    <a class="nav-link" href="#examples">Examples</a>
+                    <a class="nav-link" href="#registered-1">Registered Videos</a>
+                    <a class="nav-link" href="#screening">Screening Videos</a>
+                    <a class="nav-link" href="#models">3D Model Files</a>
+                    <a class="nav-link" href="#calibration-files">Calibration Files</a>
+                    <a class="nav-link" href="#original-c3vd-data">Original C3VD Data</a>
+                    <a class="nav-link" href="#code">Code</a>
+                    <a class="nav-link" href="#citation">Citation</a>
+                  </nav>
             </div>
         </div>
-        <div class="row justify-content-center" style="margin-top: 15px;margin-bottom: 15px;">
+        <!-- <div class="row justify-content-center" style="margin-top: 15px;margin-bottom: 15px;">
             <div class="col text-center"><img class="img-fluid" src="assets/img/sample.gif"></div>
-        </div>
+        </div> -->
         <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
             <div class="col">
                 <h2 class="text-center">Abstract</h2>
-                <p>Screening colonoscopy is an important clinical application for several 3D computer vision techniques, including depth estimation, surface reconstruction, and missing region detection. However, the development, evaluation, and comparison of these techniques in real colonoscopy videos remain largely qualitative due to the difficulty of acquiring ground truth data. In this work, we present a <span style="text-decoration: underline;">C</span>olonoscopy <span style="text-decoration: underline;">3</span>D <span style="text-decoration: underline;">V</span>ideo <span style="text-decoration: underline;">D</span>ataset (C3VD) acquired with a high definition clinical colonoscope and high-fidelity colon models for benchmarking computer vision methods in colonoscopy. We introduce a novel multimodal 2D-3D registration technique to register optical video sequences with ground truth rendered views of a known 3D model. The different modalities are registered by transforming optical images to depth maps with a Generative Adversarial Network and aligning edge features with an evolutionary optimizer. This registration method achieves an average translation error of 0.321 millimeters and an average rotation error of 0.159 degrees in simulation experiments where error-free ground truth is available. The method also leverages video information, improving registration accuracy by 55.6% for translation and 60.4% for rotation compared to single frame registration. 22 short video sequences were registered to generate 10,015 total frames with paired ground truth depth, surface normals, optical flow, occlusion, six degree-of-freedom pose, coverage maps, and 3D models. The dataset also includes screening videos acquired by a gastroenterologist with paired ground truth pose and 3D surface models. The dataset and registration source code are available at durr.jhu.edu/C3VD.<br></p>
+                <p>Computer vision techniques have the potential to improve the diagnostic performance of colonoscopy, but the lack of 3D colonoscopy datasets for training and validation hinders their development. This paper introduces <i>C3VD-DEFCOL</i>, a new dataset featuring time-resolved 3D ground truth and realistic appearance. 192 video sequences were captured by imaging 60 unique, high-fidelity silicone colon phantom segments. Ground truth depth, surface normals, optical flow, occlusion, six-degree-of-freedom pose, coverage maps, and 3D models are provided for 169 colonoscopy videos. Eight simulated screening colonoscopy videos acquired by a gastroenterologist are provided with ground truth poses. The dataset includes 15 videos featuring colon deformations for qualitative assessment. C3VD-DEFCOL emulates diverse and challenging scenarios for 3D reconstruction algorithms, including fecal debris, mucous pools, blood, debris obscuring the colonoscope lens, en-face views, and fast camera motion. The enhanced realism of C3VD-DEFCOL will allow for more robust and representative development and evaluation of 3D reconstruction algorithms. <br></p>
+            </div>
+        </div>
+        <div class="text-center" style="margin: 20px 0;">
+        <a href="https://doi.org/10.1038/s41597-026-07471-1" target="_blank" class="btn btn-outline-primary mx-2">
+            <i class="bi bi-file-earmark-text"></i> Sci Data Paper
+        </a>
+
+        <a href="https://arxiv.org/abs/2506.24074" target="_blank" class="btn btn-outline-dark mx-2">
+            <i class="bi bi-file-earmark-text"></i> arXiv Paper
+        </a>
+
+        <a href="https://github.com/DurrLab/C3VD" target="_blank" class="btn btn-outline-dark mx-2">
+            <i class="bi bi-github"></i> Code
+        </a>
+        </div>
+
+        <hr>
+        <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
+            <div class="col">
+                <h2 class="text-center" id="whats-new">What's New?</h2>
+                <ul>
+                    <li><strong>Larger dataset</strong> with 8X videos (n=192) and 2X colon geometries compared to C3VD.</li>
+                    <li><strong>Realistic artifacts</strong> such as fecal debris, mucus pools, blood, foam, and debris and water on the lens. And instruments like water jets, lens cleaning, and suction.</li>
+                    <li><strong>Challenging scenarios</strong> include fast and less smooth camera motion, en-face to down-the-barrel transitions, close-up en-face views of textureless surfaces, the scope getting covered in debris, and lens cleaning. Trajectories such as straight-line in-and-out motions, loops where the first and last points are the same, and paths where the first half mirrors the second half with lens cleaning in the middle.</li>
+                    <li><strong>Colon deformation</strong> videos for qualitative assessment. Camera poses and undeformed 3D models are provided without pixel-wise GT.</li>
+                    <li><strong>Paired clean & debris-filled colon frames.</strong> For every debris-filled colon video, there is a corresponding clean colon video with the same camera trajectory, imaging the same colon phantom.</li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row g-0 text-center align-items-center">
+            <div class="col-auto m-auto">
+                <h2 id="examples">Examples</h2> 
+                <!-- <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Fast motion with lens cleaning.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/blsry5ShjJA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div> -->
+    <!-- Video 1 -->
+    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Polyp cleaning with water jet followed by scope dipping in mucous pool and lens cleaning.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/lFLh3qCNFyA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+     <!-- Video 3 -->
+     <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Fast Loop</b></span><br></p>
+     <div>
+         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/jmZgkBGMCmk?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+     </div>
+
+    <!-- Video 2 -->
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Flowing red debris with dirty lens and lens cleaning. First half of camera trajectory mirrors the second half.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/Qqp5yh4Kw2M?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+   
+
+    <!-- Video 4 -->
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Exploratory Motion</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/qWCpDH5GiMw?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+    <!-- Video 5 -->
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>En face to down the barrel motion</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/I6cZRKQJRBc?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+
+    <hr>
+    <div class="row text-center">
+        <p style="margin-bottom: 1px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Synchronized clean and debris colon video pair. </b></span><br></p>
+        <div class="text-center" style="margin-top: 1px; margin-bottom: 4px">
+            <button id="playButton" class="btn btn-primary">Play Both Videos</button>
+        </div>
+        
+        <!-- Video 1 -->
+        <div class="col-md-6">
+            <iframe id="video1" allowfullscreen frameborder="0" 
+                src="https://www.youtube-nocookie.com/embed/8cD3riZcSpA?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                width="560" height="315">
+            </iframe>
+        </div>
+    
+        <!-- Video 2 -->
+        <div class="col-md-6">
+            <iframe id="video2" allowfullscreen frameborder="0" 
+                src="https://www.youtube-nocookie.com/embed/UjG4vS1H8jY?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                width="560" height="315">
+            </iframe>
+        </div>
+    </div>
+    
+    <!-- Play Button -->
+    
+    
+    <script>
+        // Synchronize video playback
+        document.getElementById('playButton').addEventListener('click', function () {
+            const video1 = document.getElementById('video1').contentWindow;
+            const video2 = document.getElementById('video2').contentWindow;
+    
+            // Send play commands to both videos
+            video1.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            video2.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        });
+    </script>
+<hr>
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Colon deformation video.</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/LCPLj9rk-qM?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+<hr>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col">
+                <h1 class="text-center">Dataset</h1>
+                    <p>C3VDv2 consists of two distinct colon shapes (c1 and c2), each segmented into seven to eight anatomical regions, with each segment further having four unique textures and colors (t1, t2, t3, and t4). C3VDv2 contains 192 videos with a total of 169,371 frames. It comprises three different types of video sequences:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Pixel-level Ground Truth Videos:</strong>
+                        <a href="#registered-1">Registered Videos</a> were acquired with a static, undeformed colon phantom and are provided with per-frame ground truth maps (depth, normals, optical flow, etc.). Up to three videos were recorded per phantom segment:
+                        <ul>
+                            <li><strong>v1:</strong> clean colon with a baseline camera trajectory and imaging settings.</li>
+                            <li><strong>v2:</strong> clean colon with a different camera trajectory and imaging settings as v1.</li>
+                            <li><strong>v3:</strong> debris-filled colon using the same camera trajectory and imaging settings as v2.</li>
+                        </ul>
+                        This category includes 169 short videos with a total of 67,886 frames.
+                    </li>
+                    <li>
+                        <strong>Deformation Videos:</strong>
+                        <a href="#deformation">Deformation Videos</a> consist of <strong>v4</strong> videos featuring externally induced active phantom deformation, captured with either static or linear camera motion. All videos include debris. Each folder contains all recorded RGB frames and a corresponding <em>pose.txt</em> file (if camera is not stationary). The camera poses are in a frame-wise homogeneous format. This folder contains 15 short videos with a total of 6,185 frames.
+                    </li>
+                    <li>
+                        <strong>Simulated Screening Videos:</strong>
+                        <a href="#screening">Screening Videos</a> comprise full-colon withdrawal sequences performed by a gastroenterologist to capture realistic camera motion. Similar to deformation videos, only RGB frames and camera poses in <em>pose.txt</em> are provided. A total of 8 videos are included, comprising 95,300 frames.
+                    </li>
+                </ul>
+                Parameters such as camera trajectory, speed, edge enhancement settings, simulated artifacts and challenging cases description, are comprehensively documented in the <a href=#>C3VDv2_Data_Summary_Sheet_v1.xlsx</a>.
+                </p>
+                <p>The dataset is publicly hosted on <a href=https://archive.data.jhu.edu/dataset.xhtml?persistentId=doi:10.7281/T1/JC64MK target="_blank">Johns Hopkins Research Data Repository</a>. You can either directly download from the repository page or via links below (Dataverse API based). We have also provided <a href="https://github.com/DurrLab/C3VD/blob/main/utils/jh_dataverse_api_download.sh" target="_blank">a bash script</a> to download data via Dataverse API calls.</p>
+                <p></p>
+            </div>
+        </div>
+        <h2 class="text-center" id="registered-1" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Registered Videos</h2>
+        <div class="row">
+            <div class="col">
+                <p style="margin-bottom: 0px;">For each registered video frame, the dataset includes:</p>
+                <ul>
+                    <li><strong>RGB frame:&nbsp;</strong><i>rgb/NNNN.png</i> represents the raw (distorted) video frame from the Olympus CF-HQ190L video colonoscope. The black border with video metadata was cropped, resulting in an image size of 1350 x 1080 pixels. NNNN denotes the 4-digit frame number within the video.<br></li>
+                    <li><strong>Depth frame:&nbsp;</strong><i>depth/NNNN_depth.tiff</i> represents the depth along the camera frame's Z-axis, clamped between 0 and 100 mm, and linearly scaled and encoded as a 16-bit grayscale image. For example, a pixel value of 16,384 corresponds to a depth of 25 mm.<br></li>
+                    <li><strong>Surface normal frame:&nbsp;</strong><i>normals/NNNN_normals.tiff</i> stores the X, Y, and Z components of the surface normal vector for each surfel in the R, G, and B color channels, respectively. Components are linearly scaled from &plusmn1 to 0-65535 and encoded as a 16-bit color image. Normal vector directions are defined with respect to the camera coordinate system: +x points right, +y points down, and +z points along the viewing direction (i.e., away from the camera).<br></li>
+                    <li><strong>Optical flow frame:&nbsp;</strong><i>optical_flow/NNNN_flow.tiff</i>  depicts the optical flow from the current to the previous frame. X-direction motion (left to right, clamped between -20 to 20 pixels) is stored in the red channel, and Y-direction motion (up to down, clamped between -20 to 20 pixels) is stored in the green channel. Flow values are linearly scaled and encoded as a 16-bit color image.<br></li>
+                </ul>
+            </div>
+            <div class="col">
+                <ul>
+                    <li><strong>Occlusion frame:&nbsp;</strong><i>occlusions/NNNN_occlusion.tiff</i> indicates pixels that occlude other mesh faces within 100 mm of the camera origin, assigning a value of 255 to these pixels and 0 to all others. This binary data is encoded as an 8-bit grayscale image.<br></li>
+                    <li><strong>Diffuse Frame:&nbsp;</strong><i>diffuse/NNNN_diffuse.png</i> encodes Lambertian reflectance, computed using the dot product of the surface normal and the direction of the incident light. Reflectance values range from 0.1 to 1.0 and are linearly scaled and encoded as an 8-bit grayscale image.<br></li>
+                    <li><strong>Camera pose:&nbsp;</strong>&nbsp;<i>pose.txt</i> contains each frame's flattened homogeneous camera-to-world transformation matrix (row major order).</li>
+                    <li><strong>3D model and coverage map:</strong> <i>coverage_mesh.obj</i> stores the ground truth triangulated mesh. Texture vertices store coverage values, where vt=1 indicates an observed face, and vt=2 indicates an unobserved face.</li>
+                </ul>
+            </div>
+        </div>
+
+         <!-- Download error warning box -->
+        <div
+            style="background-color: #fff9e6; border: none; padding: 12px; border-radius: 4px; margin-top: 1px; margin-bottom: 12px; font-size: 0.9rem; color: #6a5e00;">
+            <strong>Note:</strong> If downloads links below fail (e.g. "File not found"), please download files directly
+            from the <a href="https://archive.data.jhu.edu/dataset.xhtml?persistentId=doi:10.7281/T1/JC64MK"
+                target="_blank" style="color: #0c5460; text-decoration: underline;">JHU Dataverse repository</a>.
+        </div>
+
+                <!-- Registered Videos – New Dynamic Table -->
+        <div class="row">
+            <div class="col">
+            <div class="table-responsive">
+                <table id="registered-videos-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th>
+                    <th>Segment</th>
+                    <th>Phantom Number</th>
+                    <th>Video Number</th>
+                    <th># Frames</th>
+                    <th>Preview</th>
+                    <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JS will populate rows here -->
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+        <h2 class="text-center" id="deformation" style="margin:20px 0 8px;">Deformation Videos</h2>
+        <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+            <table id="deformation-videos-table" class="table table-sm">
+                <thead>
+                <tr>
+                    <th>Colon</th><th>Segment</th><th>Phantom Number</th>
+                    <th>Video Number</th><th># Frames</th>
+                    <th>Preview</th><th>Download</th>
+                </tr>
+                </thead>
+                <tbody><!-- filled by JS --></tbody>
+            </table>
+            </div>
+        </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center" id="screening" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Screening Videos</h2>
+            </div>
+        </div>
+
+        <div class="table-responsive" style="margin-top:20px">
+            <table id="screening-videos-table" class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Colon</th><th>Segment</th><th>Phantom Number</th>
+                  <th>Video Number</th><th># Frames</th>
+                  <th>Preview</th><th>Download</th>
+                </tr>
+              </thead>
+              <tbody><!-- filled by JS --></tbody>
+            </table>
+          </div>
+        
+
+        <!-- 3D model files -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" id="models" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">3D Model Files</h2>
+            <div class="table-responsive">
+                <table id="models-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th>
+                    <th>Lumen Download</th><th>Mold Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+        <h2 class="text-center" id="calibration-files" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Camera Calibration Files</h2>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <p>The spherical omnidirectional camera intrinsics are given in <a href="#">camera_intrinsics.txt</a>. Additionally, two calibration sequences are provided for geometric and photometric calibration in the camera_calibration folder:
+                <ul>
+                    <li>
+                        <strong><a href="#">camera_calib_checker.zip</a>:</strong> This video captures a 8x11 checkerboard pattern with a square size of 10 mm.
+                    </li>
+                    <li>
+                        <strong><a href="#">camera_calib_vicalib.zip</a>:</strong> This video features the "big_pattern" target from the Endomapper repository <a href="https://arxiv.org/abs/2303.07041" target="_blank">[azagra2023endomapper]</a>. The <a href="https://github.com/endomapper/EM_Dataset-PhotometricCalibration/blob/main/misc/big_pattern.pdf" target="_blank">big_pattern.pdf</a> file, when printed at 100% scale, includes a grid spacing of 5.29 mm, a large radius of 1.58 mm, and a small radius of 1.06 mm.
+                    </li>
+                </ul>
+</div>
+</div>
+<hr>
+                <!-- =========================================
+            Original C3VD  (insert after Screening Videos)
+            ========================================= -->
+        <h1 class="text-center" id="original-c3vd-data" style="margin:40px 0 8px;">
+            Original&nbsp;C3VD
+        </h1>
+        
+                 <!-- Download error warning box -->
+        <div
+            style="background-color: #fff9e6; border: none; padding: 12px; border-radius: 4px; margin-top: 1px; margin-bottom: 12px; font-size: 0.9rem; color: #6a5e00;">
+            <strong>Note:</strong> We are in the process of moving the C3VD repository, so the download links below will not work. Until then, please download data from the <a href="https://durrlab.github.io/C3VD/"
+                target="_blank" style="color: #0c5460; text-decoration: underline;">original project page</a>.
+        </div>
+
+        <!-- Original Registered Videos -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Registered Videos (C3VD v1)</h2>
+            <div class="table-responsive">
+                <table id="orig-registered-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th><th>Texture</th><th>Video</th>
+                    <th># Frames</th><th>Preview</th><th>Old Name</th><th>Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        
+        <!-- Original Screening Videos -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin:20px 0 8px;">Screening Videos (C3VD v1)</h2>
+            <div class="table-responsive">
+                <table id="orig-screening-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th><th>Texture</th><th>Video</th>
+                    <th># Frames</th><th>Preview</th><th>Old Name</th><th>Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+        <!-- 3D model files -->
+        <div class="row">
+            <div class="col">
+            <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">3D Model Files (C3VD v1)</h2>
+            <div class="table-responsive">
+                <table id="orig-models-table" class="table table-sm">
+                <thead>
+                    <tr>
+                    <th>Colon</th><th>Segment</th>
+                    <th>Lumen Download</th><th>Mold Download</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+       
+        <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Calibration Files</h2>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <p><a href="http://drive.google.com/uc?export=view&amp;id=1ZTNyLx0p19U2Q3vl8dUe2YxxxA-9WisI&amp;confirm=t">cfhq190l_10x10mm_checkerboard_images.zip</a></p>
+            </div>
+            <div class="col-auto">
+                <p><a href="http://drive.google.com/uc?export=view&amp;id=1gUA7mAM7DSD9oCvPH1hgQ0s2hhg1kOaC&amp;confirm=t">cfhq190l_omnidirectional_params.zip</a></p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-auto text-center">
+                <h2 class="text-center" id="code" style="margin: 0px; margin-top: 20px; margin-bottom: 8px;">
+                    <a href="https://github.com/DurrLab/C3VD" target="_blank" rel="noopener">Registration and Rendering Code Available on GitHub</a>
+                </h2>
+                <img src="assets/img/github.png" alt="GitHub logo">
+                <div style="margin-top: 6px; font-size: 0.9em;">
+                    <a href="https://github.com/DurrLab/C3VDv2/issues" target="_blank" rel="noopener" style="text-decoration: none;">
+                        🛠️ Report issues or ask questions on GitHub
+                    </a>
+                </div>
             </div>
         </div>
         <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
-            <div class="col-md-3">
-                <h2>Paper</h2><a href="https://arxiv.org/abs/2206.08903"><img src="assets/img/paper.png"></a>
-            </div>
             <div class="col-md-9">
-                <h2><span style="color: rgb(51, 51, 51);">Citation</span></h2>
-                <p><span style="color: rgb(51, 51, 51);">Please cite our publication if you use code or data from this site.</span><br></p><pre style="background-color:#f0f0f0; padding:10px; border-radius:3px;">
-<code class="language-latex"> @article{bobrow2023,
+                <h2 id="citation"><span style="color: rgb(51, 51, 51);">Citation</span></h2>
+                <p><span style="color: rgb(51, 51, 51);">Please consider citing our publications if you use code or data from this site.</span><br></p><pre style="background-color:#f0f0f0; padding:10px; border-radius:3px;">
+<code class="language-latex"> 
+ @misc{luk2026c3vddefcoldeformablecolonoscopydataset,
+  title={C3VD-DEFCOL: A Deformable Colonoscopy Dataset with Time-Resolved 3D Ground Truth and Realistic Appearance}, 
+  author={Ethan Luk and Mayank V. Golhar and Anthony Song and Raúl Iranzo and Víctor M. Batlle and Lalithkumar Seenivasan and José M. M. Montiel and Nicholas J. Durr},
+  year={2026},
+  eprint={2606.07891},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2606.07891}, 
+}
+
+ @article{golhar2026c3vdv2,
+  title={C3VDv2-Colonoscopy 3D video dataset with enhanced realism},
+  author={Golhar, Mayank V and Galeano Fretes, Lucas Sebastian and Ayers, Loren and Akshintala, Venkata S and Bobrow, Taylor L and Durr, Nicholas J},
+  journal={Scientific Data},
+  year={2026},
+  publisher={Nature Publishing Group}
+}
+ 
+  @article{bobrow2023,
   title={Colonoscopy 3D video dataset with paired depth from 2D-3D registration},
   author={Bobrow, Taylor L and Golhar, Mayank and Vijayan, Rohan and Akshintala, Venkata S and Garcia, Juan R and Durr, Nicholas J},
   journal={Medical Image Analysis},
@@ -67,390 +469,45 @@
 </pre>
             </div>
         </div>
-        <div class="row g-0 text-center align-items-center">
-            <div class="col-auto m-auto">
-                <h2>Results</h2>
-                <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);">Colonoscopy video frames (left) are registered with rendered views of a ground truth 3D model (right). Edge features (overlay) are aligned by optimizing a loss function (bottom).</span><br></p><div>
-    <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/9uJQxTSCyo0/?rel=0&modestbranding=1&autohide=1&showinfo=0" width="560" height="560"></iframe>
-</div>
-                <p style="margin-top: 30px;margin-bottom: 4px;">Real colonoscope frames are paired with registered ground truth depth, surface normals, occlusion, and optical flow frames<br></p><div style="text-align: center; display: flex; justify-content: center;">
-    <div class='before-after-container'>
-        <div class='img background-img'></div>
-        <div class='img foreground-img'></div>
-        <input type="range" min="1" max="100" value="50" class="slider" name='slider' id="slider">
-        <div class='slider-button'></div>
-        <div class='btn-array'>
-            <button class = "btn depth focus">Depth</button>
-            <button class = "btn normals">Normals</button>
-            <button class = "btn occlusion">Occlusion</button>
-            <button class = "btn flow">Flow</button>
-        </div>
+        <div class="row" style="margin: 40px 0px; text-align: center;">
+    
+    <div class="col" style="margin-bottom: 30px;">
+        <p>
+            <strong>C3VDv2</strong> is licensed under a 
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                <br />
+                <img alt="Creative Commons License" style="border-width:0; margin: 10px 0;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+                <br />
+                Creative Commons Attribution 4.0 International License
+            </a>
+        </p>
+    </div>
+
+    <div class="col">
+        <p xmlns:cc="http://creativecommons.org/ns#">
+            The <strong>original C3VD</strong> is licensed under 
+            <br />
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block; text-decoration: none; margin-top: 10px;">
+                CC BY-NC-SA 4.0
+                <span style="white-space: nowrap;">
+                    <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1">
+                    <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1">
+                    <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1">
+                    <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1">
+                </span>
+            </a>
+        </p>
     </div>
 </div>
-            </div>
-        </div>
-        <div class="row" style="margin-top: 30px;">
-            <div class="col">
-                <h1 class="text-center">Dataset</h1>
-                <p>C3VD contains 22 <a href="#registered">registered videos</a> with paired ground truth depth, surface normals, optical flow, occlusion, six degree-of-freedom pose, coverage maps, and 3D models. The dataset also includes 4 <a href="#screening">screening colonoscopy videos</a> acquired by a gastroenterologist with paired ground truth pose and 3D surface models. <a href="#models">3D model files and molds</a> are also available for download. <a href="#code">Registration and rendering code</a> is made available on GitHub.</p>
-            </div>
-        </div>
-        <h2 class="text-center" id="registered-1" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Registered Videos</h2>
-        <div class="row">
-            <div class="col">
-                <p style="margin-bottom: 0px;">For each registered video frame, the dataset includes:</p>
-                <ul>
-                    <li><strong>Depth frame:&nbsp;</strong>depth along the camera frame’s z-axis, clamped from 0-100 millimeters. Values are linearly scaled and encoded as a 16-bit grayscale image.<br></li>
-                    <li><strong>Surface normal frame:&nbsp;</strong>reported with respect to the camera coordinate system. X/Y/Z components are stored in separate R/G/B color channels. Components are linearly scaled from ± 1 to 0-65535. Values are encoded as a 16-bit color image.</li>
-                    <li><strong>Optical flow frame:&nbsp;</strong>computed flowing from the current frame to the previous frame, meaning the first frame in the sequence has no value. Values are saved in a color image, where the R-channel contains X-direction motion (left→right, -20 to 20 pixels), and the G-channel contains Y-direction motion (up→down, -20 to 20 pixels). Values are linearly scaled from 0 to 65535 and encoded as a 16-bit color image.<br></li>
-                </ul>
-            </div>
-            <div class="col">
-                <ul>
-                    <li><strong>Occlusion frame:&nbsp;</strong>encoded as an 8-bit binary image. Pixels occluding other mesh faces within 100mm of the camera origin are assigned a value of 255, and all other pixels are assigned a value of 0.<br></li>
-                    <li><strong>Camera pose:&nbsp;</strong>&nbsp;saved in a file named pose.txt. Each line contains a homogenous&nbsp;<span style="color: rgb(36, 41, 47);">camera-to-world transformation matrix</span>&nbsp;(flattened in row-major order) corresponding to each frame.</li>
-                </ul>
-                <p style="margin-bottom: 0px;">For each video sequence, we also provide:<br></p>
-                <ul>
-                    <li><strong>3D model and coverage map:</strong> ground truth triangulated mesh, stored as a Wavefront OBJ file named coverage_mesh.obj. Coverage is embedded in the OBJ file by texture vertices assigned to each face (vt=1 is observed, vt=2 is unobserved).</li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>Texture</th>
-                                <th>Video</th>
-                                <th># Frames</th>
-                                <th></th>
-                                <th>Download</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>1</td>
-                                <td>a</td>
-                                <td>276</td>
-                                <td id="c1a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="https://drive.google.com/uc?export=view&amp;id=14o6_4GQLZWx5dQq2L_drzmN_rlCT7Yhr&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t1_a.zip</span></a>&nbsp;(2.86 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>1</td>
-                                <td>b</td>
-                                <td>765</td>
-                                <td id="c1b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1z3AHdnBH_YoCMnnTfDa8SNPQYIsvaBO3&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t1_b.zip</span></a>&nbsp;(8.36 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>2</td>
-                                <td>a</td>
-                                <td>370</td>
-                                <td id="c2a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=13XhJIev9memFtwUf_dnjJ7o8z6O_c-xW&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t2_a.zip</span></a>&nbsp;(3.71 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>2</td>
-                                <td>b</td>
-                                <td>1,142</td>
-                                <td id="c2b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1ykYtQGiFesev5QLfz_avYuQ5a7Zs8kgF&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t2_b.zip</span></a>&nbsp;(11.06 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>2</td>
-                                <td>c</td>
-                                <td>595</td>
-                                <td id="c2c"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1tNoBLpPbrQexKlnOKMK2peERn9Rj_9Dp&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t2_c.zip</span></a>&nbsp;(6.13 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>3</td>
-                                <td>a</td>
-                                <td>730</td>
-                                <td id="c3a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1Uw8uCRRDm_RrgkccGbiBXZHf9P-THM2Q&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t3_a.zip</span></a>&nbsp;(6.80 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>4</td>
-                                <td>a</td>
-                                <td>465</td>
-                                <td id="c4a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1FC-dR__0LVb7WH02KpUx9TZVvvvN-Gyx&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t4_a.zip</span></a>&nbsp;(5.04 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td>4</td>
-                                <td>b</td>
-                                <td>425</td>
-                                <td id="c4b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=11SbH2AZsuciTu3iGxdXCdQZky6uDTyS5&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_t4_b.zip</span></a>&nbsp;(4.41 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Descending Colon</td>
-                                <td>4</td>
-                                <td>a</td>
-                                <td>148</td>
-                                <td id="d4a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1d9HDNg4-Og1cTWM-eIU5SWM2BMrMWhwQ&amp;confirm=t"><span style="color: rgb(0, 0, 0);">desc_t4_a.zip</span></a>&nbsp;(1.24 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Sigmoid Colon</td>
-                                <td>1</td>
-                                <td>a</td>
-                                <td>700</td>
-                                <td id="s1a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=19VGDuZ73OWNwM8eIgDkkZYBPJPQ5BD91&amp;confirm=t"><span style="color: rgb(0, 0, 0);">sigmoid_t1_a.zip</span></a>&nbsp;(5.20 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Sigmoid Colon</td>
-                                <td>2</td>
-                                <td>a</td>
-                                <td>514</td>
-                                <td id="s2a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=16epAys428g9vBQgm611TElMyAXORo7rH&amp;confirm=t"><span style="color: rgb(0, 0, 0);">sigmoid_t2_a.zip</span></a>&nbsp;(4.22 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Sigmoid Colon</td>
-                                <td>3</td>
-                                <td>a</td>
-                                <td>613</td>
-                                <td id="s3a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1ZRU2KuHoc2XCbKSY_A1S-7BxEfKf9xPr&amp;confirm=t"><span style="color: rgb(0, 0, 0);">sigmoid_t3_a.zip</span></a>&nbsp;(4.58 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Sigmoid Colon</td>
-                                <td>3</td>
-                                <td>b</td>
-                                <td>536</td>
-                                <td id="s3b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1XfZFAQ5_Wxle8d5wSlOCumKSg4IP8wTv&amp;confirm=t"><span style="color: rgb(0, 0, 0);">sigmoid_t3_b.zip</span></a>&nbsp;(4.21 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>1</td>
-                                <td>a</td>
-                                <td>61</td>
-                                <td id="t1a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1urFuVo8ZalwPmsXEZg3xzhuqhpgWV8hw&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t1_a.zip</span></a>&nbsp;(0.59 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>1</td>
-                                <td>b</td>
-                                <td>700</td>
-                                <td id="t1b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1hyjmd7vn86McE1nUnYCzvOm8LlyHLYwt&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t1_b.zip</span></a>&nbsp;(5.07 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>2</td>
-                                <td>a</td>
-                                <td>194</td>
-                                <td id="t2a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1ylZWWtVlXfDx9dhPIeWJ1HqDHJZ3QKdH&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t2_a.zip</span></a>&nbsp;(1.58 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>2</td>
-                                <td>b</td>
-                                <td>103</td>
-                                <td id="t2b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1vru228_TEgxT3aS90CmvOWsMB0RLnAxn&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t2_b.zip</span></a>&nbsp;(0.97 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>2</td>
-                                <td>c</td>
-                                <td>235</td>
-                                <td id="t2c"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=12YpowbP6zhoO_Qx9UBwhfRLXNJN1EAu4&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t2_c.zip</span></a>&nbsp;(1.83 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>3</td>
-                                <td>a</td>
-                                <td>250</td>
-                                <td id="t3a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1B4aeZfAqmUJgWr8e-2YAibUe4er30ncr&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t3_a.zip</span></a>&nbsp;(1.83 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>3</td>
-                                <td>b</td>
-                                <td>214</td>
-                                <td id="t3b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1ZpbYcDVP-sCTjjQrDc303olFgsr2nA5J&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t3_b.zip</span></a>&nbsp;(1.66 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>4</td>
-                                <td>a</td>
-                                <td>382</td>
-                                <td id="t4a"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=18qzXMifS54jAx29yROKXXxxZg0qo-iTz&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t4_a.zip</span></a>&nbsp;(3.10 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td>4</td>
-                                <td>b</td>
-                                <td>597</td>
-                                <td id="t4b"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1C-nw6MR7sxssw3LS-GpiPmwBzEYhUCHN&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_t4_b.zip</span></a>&nbsp;(4.61 GB)</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h2 class="text-center" id="screening" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Screening Videos</h2>
-                <p>In addition to the video sequence, each file also contains camera pose information saved in a file named pose.txt. Each line contains a homogenous pose (flattened in row-major order) corresponding to each frame.</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>Texture</th>
-                                <th># Frames</th>
-                                <th></th>
-                                <th>Download</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Full Colon</td>
-                                <td>1</td>
-                                <td>5,458</td>
-                                <td id="screen1"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=18m3Z5zJtljor_AGmPW8OgO9fRuactuNk&amp;confirm=t"><span style="color: rgb(0, 0, 0);">screening_t1.zip</span></a>&nbsp;(8.13 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Full Colon</td>
-                                <td>2</td>
-                                <td>5,100</td>
-                                <td id="screen2"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1kn_qevX7lLh3gWkiKAt3hgWFpy0P68s6&amp;confirm=t"><span style="color: rgb(0, 0, 0);">screening_t2.zip</span></a>&nbsp;(7.09 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Full Colon</td>
-                                <td>3</td>
-                                <td>4,726</td>
-                                <td id="screen3"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1RmOnnjJBzCMwO5gPY4h3e4MpcDDOvOb6&amp;confirm=t"><span style="color: rgb(0, 0, 0);">screening_t3.zip</span></a>&nbsp;(7.07 GB)</td>
-                            </tr>
-                            <tr>
-                                <td>Full Colon</td>
-                                <td>4</td>
-                                <td>4,774</td>
-                                <td id="screen4"><span style="text-decoration: underline;">Preview</span></td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1sYps79WjJ0ETRtuWtHd_1zeuyPLtoMM7&amp;confirm=t"><span style="color: rgb(0, 0, 0);">screening_t4.zip</span></a>&nbsp;(7.36 GB)</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <h2 class="text-center" id="models" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">3D Model Files</h2>
-        <div class="row">
-            <div class="col">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Model</th>
-                                <th>Object Download</th>
-                                <th>Mold Download</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Ascending Colon</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1EsWdG3r9WYUpONzNKFbNVl_u9zpTQPCd&amp;confirm=t"><span style="color: rgb(0, 0, 0);">ascend_model.obj</span></a>&nbsp;(25.4 MB)</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1coep9FX1AV0rWqFNpvxsKbDBRDUC7hQE&amp;confirm=t"><span style="color: rgb(0, 0, 0);">ascend_mold.zip</span></a>&nbsp;(18.7 MB)</td>
-                            </tr>
-                            <tr>
-                                <td>Cecum</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1-1jVQn6lFHP22qyVO-fHA3f9Vvqiztpb&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_model.obj</span></a>&nbsp;(54.8 MB)</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1SlDiYm6B7t0Ce2ztE9ThA34AE7dwu7UN&amp;confirm=t"><span style="color: rgb(0, 0, 0);">cecum_mold.zip</span></a>&nbsp;(24.9 MB)</td>
-                            </tr>
-                            <tr>
-                                <td>Descending Colon</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1B8CNXxAM5t8C2W14YAnzWJYUu5Lmtit7&amp;confirm=t"><span style="color: rgb(0, 0, 0);">desc_model.obj</span></a>&nbsp;(38.0 MB)</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1kRPcB0IK_WdZtgp3b8SpD99vURd_NxAb&amp;confirm=t"><span style="color: rgb(0, 0, 0);">desc_mold.zip</span></a>&nbsp;(26.6 MB)</td>
-                            </tr>
-                            <tr>
-                                <td>Sigmoid Colon</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1ySPh9w9Ix-fxh4r6cn3LYdu_A_1QWGAp&amp;confirm=t"><span style="color: rgb(0, 0, 0);">sigmoid_model.obj</span></a>&nbsp;(20.8 MB)</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=11k7AuwHVEae6EhQQ98R0tAwbbbtv8gdU&amp;confirm=t"><span style="color: rgb(0, 0, 0);">sigmoid_mold.zip</span></a>&nbsp;(42.2 MB)</td>
-                            </tr>
-                            <tr>
-                                <td>Transcending Colon</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1--_lUA1fRlIB6Ed1rf1FfqsSWxe9vKYQ&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_model.obj</span></a>&nbsp;(18.3 MB)</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=1Icvgs1DGQQ1fGS3bgAjbsA9NJYNQhGrB&amp;confirm=t"><span style="color: rgb(0, 0, 0);">trans_mold.zip</span></a>&nbsp;(24.1 MB)</td>
-                            </tr>
-                            <tr>
-                                <td>Full Colon</td>
-                                <td><a href="http://drive.google.com/uc?export=view&amp;id=12gKUf4HvPYm3DiRxFmoum70--kkSewhq&amp;confirm=t"><span style="color: rgb(0, 0, 0);">full_model.obj</span></a>&nbsp;(194.8 MB)</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <h2 class="text-center" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;">Calibration Files</h2>
-        <div class="row justify-content-center">
-            <div class="col-auto">
-                <p><a href="http://drive.google.com/uc?export=view&amp;id=1ZTNyLx0p19U2Q3vl8dUe2YxxxA-9WisI&amp;confirm=t">cfhq190l_10x10mm_checkerboard_images.zip</a></p>
-            </div>
-            <div class="col-auto">
-                <p><a href="http://drive.google.com/uc?export=view&amp;id=1gUA7mAM7DSD9oCvPH1hgQ0s2hhg1kOaC&amp;confirm=t">cfhq190l_omnidirectional_params.zip</a></p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h2 class="text-center" id="screening-1" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;"><span style="color: var(--bs-gray-800);">Revision History</span></h2>
-                <p><em>10/14/2023 |&nbsp;Updated the dataset file names to reflect peer-review completion.</em></p>
-                <p><em>05/03/2023 |&nbsp;Revised ground truth surface normal frames and updated naming convention:</em></p>
-                <ul>
-                    <li>Corrected an error in the rendering code clipped negative surface normal z-components to 0 and resulted in some surface normals having a non-unitary length.</li>
-                    <li>Surface normal axes were updated from +x pointing right, +y pointing up, and +z pointing out of the screen to +x pointing right, +y pointing down, and +z pointing into the screen to be consistent with the camera coordinate system as shown in Figure 3 of the paper.</li>
-                    <li>The naming convention of the frames was updated to include zero padding (e.g. <em>0005_color.png</em>).</li>
-                </ul>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-auto text-center">
-                <h2 class="text-center" id="code" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;"><a href="https://github.com/DurrLab/C3VD">Registration and Rendering Code Available on GitHub</a></h2><img src="assets/img/github.png">
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-auto text-center">
-                <h2 class="text-center" id="code-1" style="margin: 0px;margin-top: 20px;margin-bottom: 8px;"><a href="https://durrlab.github.io/C3VDv2/">Check out Version 2 of C3VD Here</a></h2>
-            </div>
-        </div>
-        <div class="row" style="margin: 0px;">
-            <div class="col text-center" style="margin: 0px;padding: 0px;margin-top: 40px;"><p xmlns:cc="http://creativecommons.org/ns#" >This work is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p></div>
-        </div>
+</div>
     </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/before-after.js"></script>
+    <!-- 👇 define initDataverseDownloadLinks() first -->
+    <script src="assets/js/dataverse-download.js"></script>
+
+    <!-- 👇 now load and call it inside this file -->
+    <script src="assets/js/load_csv_tables.js"></script>
     <script src="assets/js/video-modal.js"></script>
 </body>
 
