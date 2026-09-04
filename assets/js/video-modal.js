@@ -10,6 +10,18 @@ function changeVideo(vId){
   $("#video-modal").modal("show");
 }
 
+// Delegate clicks on any dynamically-created preview cells
+$(document).on('click', '.preview-cell', function(){
+    // `data-youtube` holds the YouTube ID you set in populateTable()
+    const ytId = $(this).data('youtube');
+    if (ytId) {
+      changeVideo(ytId);
+    } else {
+      console.warn('No YouTube ID on', this);
+    }
+  });
+  
+
 $("#c1a").click(function(){
     changeVideo("esEBiCIfDUY")
 })
