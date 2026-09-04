@@ -56,10 +56,12 @@
                  <nav class="nav justify-content-center mb-4">
                     <a class="nav-link" href="#whats-new">What's New?</a>
                     <a class="nav-link" href="#examples">Examples</a>
-                    <a class="nav-link" href="#registered-1">Registered Videos</a>
-                    <a class="nav-link" href="#screening">Screening Videos</a>
+                    <a class="nav-link" href="#c3vd-defcol">C3VD-DEFCOL</a>
+                    <!-- <a class="nav-link" href="#registered-1">Registered Videos</a> -->
+                    <!-- <a class="nav-link" href="#screening">Screening Videos</a> -->
+                    <a class="nav-link" href="#c3vd-v2">C3VDv2 Data</a>
                     <a class="nav-link" href="#models">3D Model Files</a>
-                    <a class="nav-link" href="#calibration-files">Calibration Files</a>
+                    <!-- <a class="nav-link" href="#calibration-files">Calibration Files</a> -->
                     <a class="nav-link" href="#original-c3vd-data">Original C3VD Data</a>
                     <a class="nav-link" href="#code">Code</a>
                     <a class="nav-link" href="#citation">Citation</a>
@@ -72,19 +74,15 @@
         <div class="row" style="margin-bottom: 15px;margin-top: 15px;">
             <div class="col">
                 <h2 class="text-center">Abstract</h2>
-                <p>Computer vision techniques have the potential to improve the diagnostic performance of colonoscopy, but the lack of 3D colonoscopy datasets for training and validation hinders their development. This paper introduces <i>C3VD-DEFCOL</i>, a new dataset featuring time-resolved 3D ground truth and realistic appearance. 192 video sequences were captured by imaging 60 unique, high-fidelity silicone colon phantom segments. Ground truth depth, surface normals, optical flow, occlusion, six-degree-of-freedom pose, coverage maps, and 3D models are provided for 169 colonoscopy videos. Eight simulated screening colonoscopy videos acquired by a gastroenterologist are provided with ground truth poses. The dataset includes 15 videos featuring colon deformations for qualitative assessment. C3VD-DEFCOL emulates diverse and challenging scenarios for 3D reconstruction algorithms, including fecal debris, mucous pools, blood, debris obscuring the colonoscope lens, en-face views, and fast camera motion. The enhanced realism of C3VD-DEFCOL will allow for more robust and representative development and evaluation of 3D reconstruction algorithms. <br></p>
+                <p>3D reconstruction could improve colonoscopy by estimating mucosal coverage and alerting clinicians to missed regions during screening. However, algorithm development is limited as no current datasets provide both a realistic in vivo appearance and dense, time-resolved 3D ground truth, especially under non-rigid deformation. We present C3VD-DEFCOL, a framework and dataset for evaluating deformable colonoscopy reconstruction with paired geometry and realistic texture. Starting from C3VD/C3VDv2 colon meshes and camera trajectories, we generate controlled deformations of the colon surface, including peristaltic waves and centerline motion, and render per-frame depth, surface normals, optical flow, camera poses, and time-stamped 3D meshes. We then use the rendered geometry, primarily depth, to condition an LTX-2.3-based sim-to-real translation model that produces RGB clips with in vivo-like mucosal color, texture, vasculature, and specular appearance while preserving the underlying 3D scene structure. The resulting dataset contains 110 videos from 11 unique colon mesh geometries, with varying camera trajectories, appearances, and parameterized deformation regimes, including three peristaltic severity levels that serve as controlled evaluation axes. We evaluate the generated videos using appearance realism, geometric consistency, and temporal consistency metrics, and use the paired ground truth to benchmark the downstream task of pose estimation in deformable 3D reconstruction. Our experiments show how pose estimation error increases with increasing deformation severity, providing a controlled stress test that is not possible with existing in vivo datasets. Overall, C3VD-DEFCOL is designed as a reproducible, quantitative evaluation platform for testing deformable 3D reconstruction algorithms, with the goal of reducing the domain gap between synthetic datasets and in vivo colonoscopy. <br></p>
             </div>
         </div>
         <div class="text-center" style="margin: 20px 0;">
-        <a href="https://doi.org/10.1038/s41597-026-07471-1" target="_blank" class="btn btn-outline-primary mx-2">
-            <i class="bi bi-file-earmark-text"></i> Sci Data Paper
-        </a>
-
-        <a href="https://arxiv.org/abs/2506.24074" target="_blank" class="btn btn-outline-dark mx-2">
+        <a href="https://arxiv.org/abs/2606.07891" target="_blank" class="btn btn-outline-dark mx-2">
             <i class="bi bi-file-earmark-text"></i> arXiv Paper
         </a>
 
-        <a href="https://github.com/DurrLab/C3VD" target="_blank" class="btn btn-outline-dark mx-2">
+        <a href="https://github.com/DurrLab/C3VDv3" target="_blank" class="btn btn-outline-dark mx-2">
             <i class="bi bi-github"></i> Code
         </a>
         </div>
@@ -94,11 +92,11 @@
             <div class="col">
                 <h2 class="text-center" id="whats-new">What's New?</h2>
                 <ul>
-                    <li><strong>Larger dataset</strong> with 8X videos (n=192) and 2X colon geometries compared to C3VD.</li>
-                    <li><strong>Realistic artifacts</strong> such as fecal debris, mucus pools, blood, foam, and debris and water on the lens. And instruments like water jets, lens cleaning, and suction.</li>
-                    <li><strong>Challenging scenarios</strong> include fast and less smooth camera motion, en-face to down-the-barrel transitions, close-up en-face views of textureless surfaces, the scope getting covered in debris, and lens cleaning. Trajectories such as straight-line in-and-out motions, loops where the first and last points are the same, and paths where the first half mirrors the second half with lens cleaning in the middle.</li>
-                    <li><strong>Colon deformation</strong> videos for qualitative assessment. Camera poses and undeformed 3D models are provided without pixel-wise GT.</li>
-                    <li><strong>Paired clean & debris-filled colon frames.</strong> For every debris-filled colon video, there is a corresponding clean colon video with the same camera trajectory, imaging the same colon phantom.</li>
+                    <li>First colonoscopy dataset pairing <strong>realistic in vivo-style</strong> RGB appearance with dense, time-resolved 3D ground truth under controlled non-rigid deformation — 110 videos across 11 unique colon geometries (cecum through sigmoid), totaling 9,240 frames.</li>
+                    <li>Realistic <strong>sim-to-real</strong> RGB video generated via a geometry-conditioned diffusion model, producing in vivo-style mucosal color, texture, vasculature, and specular highlights while maintaining 3D geometry.</li>
+                    <li>Dense per-frame ground truth: RGB, depth, surface normals, optical flow, occlusion masks, camera poses, and <strong>time-stamped deforming 3D meshes</strong> for every frame.</li>
+                    <li><strong>Open, extensible generation framework</strong> allowing researchers to produce additional videos with custom colon geometry, camera trajectory, deformation type, and severity</li>
+                    <li><strong>Controlled deformation regimes</strong>: Rigid, low/medium/high-magnitude peristalsis, and centerline-shift to test reconstruction robustness as non-rigid motion increases.</li>
                 </ul>
             </div>
         </div>
@@ -111,40 +109,40 @@
         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/blsry5ShjJA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div> -->
     <!-- Video 1 -->
-    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Polyp cleaning with water jet followed by scope dipping in mucous pool and lens cleaning.</b></span><br></p>
+    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Descending Colon with Peristalsis Deformation</b></span><br></p>
     <div>
-        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/lFLh3qCNFyA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+        <iframe allowfullscreen frameborder="0" src="   https://www.youtube-nocookie.com/embed/PPsMMgYIWv4?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div>
 
      <!-- Video 3 -->
-     <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Fast Loop</b></span><br></p>
+     <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>High Deformation with Mucosal Artifacts</b></span><br></p>
      <div>
-         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/jmZgkBGMCmk?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/N9Rr43CFhJI?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
      </div>
 
     <!-- Video 2 -->
-    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Flowing red debris with dirty lens and lens cleaning. First half of camera trajectory mirrors the second half.</b></span><br></p>
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Narrow Band Imaging (NBI) Texture</b></span><br></p>
     <div>
-        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/Qqp5yh4Kw2M?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/oYNuB9NKTY?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div>
 
    
 
     <!-- Video 4 -->
-    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Exploratory Motion</b></span><br></p>
+    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Cecum En Face View</b></span><br></p>
     <div>
-        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/qWCpDH5GiMw?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/Ygxm5EqGrYk?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div>
 
     <!-- Video 5 -->
     <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>En face to down the barrel motion</b></span><br></p>
     <div>
-        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/I6cZRKQJRBc?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/2HeqbbYMoMA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div>
 
     <hr>
     <div class="row text-center">
-        <p style="margin-bottom: 1px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Synchronized clean and debris colon video pair. </b></span><br></p>
+        <p style="margin-bottom: 1px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Synchronized polyp video pair with different textures </b></span><br></p>
         <div class="text-center" style="margin-top: 1px; margin-bottom: 4px">
             <button id="playButton" class="btn btn-primary">Play Both Videos</button>
         </div>
@@ -152,7 +150,7 @@
         <!-- Video 1 -->
         <div class="col-md-6">
             <iframe id="video1" allowfullscreen frameborder="0" 
-                src="https://www.youtube-nocookie.com/embed/8cD3riZcSpA?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                src="https://www.youtube-nocookie.com/embed/NHTvL-Q5c0I?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
                 width="560" height="315">
             </iframe>
         </div>
@@ -160,7 +158,7 @@
         <!-- Video 2 -->
         <div class="col-md-6">
             <iframe id="video2" allowfullscreen frameborder="0" 
-                src="https://www.youtube-nocookie.com/embed/UjG4vS1H8jY?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                src="https://www.youtube-nocookie.com/embed/sn826AtDygs?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
                 width="560" height="315">
             </iframe>
         </div>
@@ -180,42 +178,21 @@
             video2.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         });
     </script>
-<hr>
+<!-- <hr>
     <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Colon deformation video.</b></span><br></p>
     <div>
         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/LCPLj9rk-qM?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
-    </div>
+    </div> -->
 <hr>
             </div>
         </div>
         <div class="row" style="margin-top: 30px;">
             <div class="col">
-                <h1 class="text-center">Dataset</h1>
-                    <p>C3VDv2 consists of two distinct colon shapes (c1 and c2), each segmented into seven to eight anatomical regions, with each segment further having four unique textures and colors (t1, t2, t3, and t4). C3VDv2 contains 192 videos with a total of 169,371 frames. It comprises three different types of video sequences:
-                </p>
-                <ul>
-                    <li>
-                        <strong>Pixel-level Ground Truth Videos:</strong>
-                        <a href="#registered-1">Registered Videos</a> were acquired with a static, undeformed colon phantom and are provided with per-frame ground truth maps (depth, normals, optical flow, etc.). Up to three videos were recorded per phantom segment:
-                        <ul>
-                            <li><strong>v1:</strong> clean colon with a baseline camera trajectory and imaging settings.</li>
-                            <li><strong>v2:</strong> clean colon with a different camera trajectory and imaging settings as v1.</li>
-                            <li><strong>v3:</strong> debris-filled colon using the same camera trajectory and imaging settings as v2.</li>
-                        </ul>
-                        This category includes 169 short videos with a total of 67,886 frames.
-                    </li>
-                    <li>
-                        <strong>Deformation Videos:</strong>
-                        <a href="#deformation">Deformation Videos</a> consist of <strong>v4</strong> videos featuring externally induced active phantom deformation, captured with either static or linear camera motion. All videos include debris. Each folder contains all recorded RGB frames and a corresponding <em>pose.txt</em> file (if camera is not stationary). The camera poses are in a frame-wise homogeneous format. This folder contains 15 short videos with a total of 6,185 frames.
-                    </li>
-                    <li>
-                        <strong>Simulated Screening Videos:</strong>
-                        <a href="#screening">Screening Videos</a> comprise full-colon withdrawal sequences performed by a gastroenterologist to capture realistic camera motion. Similar to deformation videos, only RGB frames and camera poses in <em>pose.txt</em> are provided. A total of 8 videos are included, comprising 95,300 frames.
-                    </li>
-                </ul>
-                Parameters such as camera trajectory, speed, edge enhancement settings, simulated artifacts and challenging cases description, are comprehensively documented in the <a href=#>C3VDv2_Data_Summary_Sheet_v1.xlsx</a>.
-                </p>
-                <p>The dataset is publicly hosted on <a href=https://archive.data.jhu.edu/dataset.xhtml?persistentId=doi:10.7281/T1/JC64MK target="_blank">Johns Hopkins Research Data Repository</a>. You can either directly download from the repository page or via links below (Dataverse API based). We have also provided <a href="https://github.com/DurrLab/C3VD/blob/main/utils/jh_dataverse_api_download.sh" target="_blank">a bash script</a> to download data via Dataverse API calls.</p>
+                <h1 class="text-center">C3VD-DEFCOL</h1>
+                    <p>
+                        C3VD-DEFCOL builds on C3VDv2, which consists of two distinct colon shapes, each segmented into seven to eight anatomical regions. C3VD-DEFCOL contains 110 videos with a total of 9240 frames. Code to generate additional videos is available in <a href="https://github.com/DurrLab/C3VDv3" target="_blank">our GitHub repository</a>.
+                    </p>
+                <p>The dataset is coming soon will be publicly hosted on <a href=https://archive.data.jhu.edu/dataverse/DurrLab target="_blank">Johns Hopkins Research Data Repository</a>. </p>
                 <p></p>
             </div>
         </div>
@@ -224,22 +201,30 @@
             <div class="col">
                 <p style="margin-bottom: 0px;">For each registered video frame, the dataset includes:</p>
                 <ul>
-                    <li><strong>RGB frame:&nbsp;</strong><i>rgb/NNNN.png</i> represents the raw (distorted) video frame from the Olympus CF-HQ190L video colonoscope. The black border with video metadata was cropped, resulting in an image size of 1350 x 1080 pixels. NNNN denotes the 4-digit frame number within the video.<br></li>
-                    <li><strong>Depth frame:&nbsp;</strong><i>depth/NNNN_depth.tiff</i> represents the depth along the camera frame's Z-axis, clamped between 0 and 100 mm, and linearly scaled and encoded as a 16-bit grayscale image. For example, a pixel value of 16,384 corresponds to a depth of 25 mm.<br></li>
-                    <li><strong>Surface normal frame:&nbsp;</strong><i>normals/NNNN_normals.tiff</i> stores the X, Y, and Z components of the surface normal vector for each surfel in the R, G, and B color channels, respectively. Components are linearly scaled from &plusmn1 to 0-65535 and encoded as a 16-bit color image. Normal vector directions are defined with respect to the camera coordinate system: +x points right, +y points down, and +z points along the viewing direction (i.e., away from the camera).<br></li>
-                    <li><strong>Optical flow frame:&nbsp;</strong><i>optical_flow/NNNN_flow.tiff</i>  depicts the optical flow from the current to the previous frame. X-direction motion (left to right, clamped between -20 to 20 pixels) is stored in the red channel, and Y-direction motion (up to down, clamped between -20 to 20 pixels) is stored in the green channel. Flow values are linearly scaled and encoded as a 16-bit color image.<br></li>
+                    <li><strong>RGB frame:&nbsp;</strong><i>rgb/NNNN.png</i> represents the sim2real generated 512x512 image. NNNN denotes the 4-digit frame number within the video.<br></li>
+                    <li><strong>Depth frame:&nbsp;</strong><i>depth/NNNN_depth.png</i> represents the depth along the camera frame's Z-axis, clamped between 0 and 100 mm, and linearly scaled and encoded as a 16-bit grayscale image. For example, a pixel value of 16,384 corresponds to a depth of 25 mm.<br></li>
+                    <li><strong>Surface normal frame:&nbsp;</strong><i>normals/NNNN_normals.png</i> stores the X, Y, and Z components of the surface normal vector for each surfel in the R, G, and B color channels, respectively. Components are linearly scaled from &plusmn1 to 0-255 and encoded as a 8-bit color image. Normal vector directions are defined with respect to the camera coordinate system: +x points right, +y points down, and +z points along the viewing direction (i.e., away from the camera).<br></li>
+                    <li><strong>Optical flow frame:&nbsp;</strong><i>optical_flow/NNNN_flow.png</i>  depicts the optical flow from the current to the previous frame. X-direction motion (left to right, clamped between -20 to 20 pixels) is stored in the red channel, and Y-direction motion (up to down, clamped between -20 to 20 pixels) is stored in the green channel. Flow values are linearly scaled and encoded as a 8-bit color image.<br></li>
                 </ul>
             </div>
             <div class="col">
                 <ul>
-                    <li><strong>Occlusion frame:&nbsp;</strong><i>occlusions/NNNN_occlusion.tiff</i> indicates pixels that occlude other mesh faces within 100 mm of the camera origin, assigning a value of 255 to these pixels and 0 to all others. This binary data is encoded as an 8-bit grayscale image.<br></li>
+                    <li><strong>Occlusion frame:&nbsp;</strong><i>occlusions/NNNN_occlusion.png</i> indicates pixels that occlude other mesh faces within 100 mm of the camera origin, assigning a value of 255 to these pixels and 0 to all others. This binary data is encoded as an 8-bit grayscale image.<br></li>
                     <li><strong>Diffuse Frame:&nbsp;</strong><i>diffuse/NNNN_diffuse.png</i> encodes Lambertian reflectance, computed using the dot product of the surface normal and the direction of the incident light. Reflectance values range from 0.1 to 1.0 and are linearly scaled and encoded as an 8-bit grayscale image.<br></li>
-                    <li><strong>Camera pose:&nbsp;</strong>&nbsp;<i>pose.txt</i> contains each frame's flattened homogeneous camera-to-world transformation matrix (row major order).</li>
-                    <li><strong>3D model and coverage map:</strong> <i>coverage_mesh.obj</i> stores the ground truth triangulated mesh. Texture vertices store coverage values, where vt=1 indicates an observed face, and vt=2 indicates an unobserved face.</li>
+                    <li><strong>Camera pose:&nbsp;</strong>&nbsp;<i>pose.txt</i> contains each frame's flattened homogeneous camera-to-world transformation matrix (column major order).</li>
+                    <li><strong>World Positions and Normals&nbsp;</strong>&nbsp;<i>world_vertex_positions.bin / world_vertex_normals.bin</i> contain the 3D positions and normals of the world-space vertices.</li>
+                    <li><strong>3D aligned model</strong> <i>aligned_model.obj</i> stores the ground truth triangulated mesh. Texture vertices store coverage values, where vt=1 indicates an observed face, and vt=2 indicates an unobserved face.</li>
                 </ul>
             </div>
         </div>
 
+        <hr>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col">
+                <h1 class="text-center">C3VDv2</h1>
+            </div>
+        </div>
+       
          <!-- Download error warning box -->
         <div
             style="background-color: #fff9e6; border: none; padding: 12px; border-radius: 4px; margin-top: 1px; margin-bottom: 12px; font-size: 0.9rem; color: #6a5e00;">
@@ -425,7 +410,7 @@
         <div class="row justify-content-center">
             <div class="col-auto text-center">
                 <h2 class="text-center" id="code" style="margin: 0px; margin-top: 20px; margin-bottom: 8px;">
-                    <a href="https://github.com/DurrLab/C3VD" target="_blank" rel="noopener">Registration and Rendering Code Available on GitHub</a>
+                    <a href="https://github.com/DurrLab/C3VDv3" target="_blank" rel="noopener">Registration and Rendering Code Available on GitHub</a>
                 </h2>
                 <img src="assets/img/github.png" alt="GitHub logo">
                 <div style="margin-top: 6px; font-size: 0.9em;">
