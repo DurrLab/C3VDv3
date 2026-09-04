@@ -23,8 +23,8 @@
             <div class="col-9">
                 <h1 class="text-center">C3VD-DEFCOL: A Deformable Colonoscopy Dataset with Time-Resolved 3D Ground Truth and Realistic Appearance</h1>
                 <div class="row text-center justify-content-center">
-                    <div class="col-3"><a href="https://scholar.google.com/citations?user=DcQV-ZoAAAAJ&hl=en">Ethan Luk<sup>1</sup></a></div>
-                    <div class="col-3"><a href="https://scholar.google.com/citations?user=FjX3JAEAAAAJ">Mayank V. Golhar<sup>1</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=DcQV-ZoAAAAJ&hl=en">Ethan Luk<sup>1,*</sup></a></div>
+                    <div class="col-3"><a href="https://scholar.google.com/citations?user=FjX3JAEAAAAJ">Mayank V. Golhar<sup>1,*</sup></a></div>
                     <div class="col-3"><a href="https://scholar.google.com/citations?user=TLpqee4AAAAJ&hl=en&oi=ao">Anthony Song<sup>1</sup></a></div>
                     <div class="col-3"><a href="https://scholar.google.com/citations?user=tqubbHoAAAAJ&hl=en&oi=sra">Raúl Iranzo<sup>2</sup></a></div>
 
@@ -48,6 +48,9 @@
                         </p>
                         <p class="text-center" style="margin-bottom: 0px;">
                             <sup>3</sup>Department of Computer Science, Johns Hopkins University, Baltimore, MD, USA
+                        </p>
+                        <p class="text-center" style="margin-bottom: 0px;">
+                            <sup>*</sup>Indicates Equal Contribution
                         </p>
                     </div>
                 </div>
@@ -109,9 +112,15 @@
         <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/blsry5ShjJA?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div> -->
     <!-- Video 1 -->
-    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Descending Colon with Peristalsis Deformation</b></span><br></p>
+    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Colonoscopy Video with Vascularity and Deformation</b></span><br></p>
     <div>
-        <iframe allowfullscreen frameborder="0" src="   https://www.youtube-nocookie.com/embed/PPsMMgYIWv4?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/dBPEZsnF-g8?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
+    </div>
+    
+    <!-- Video 2 -->
+    <p style="margin-bottom: 4px;"><span style="color: rgb(13, 13, 13);"><b>Forward and Backward Camera Motion</b></span><br></p>
+    <div>
+        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/PPsMMgYIWv4?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
     </div>
 
      <!-- Video 3 -->
@@ -119,13 +128,6 @@
      <div>
          <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/N9Rr43CFhJI?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
      </div>
-
-    <!-- Video 2 -->
-    <p style="margin-bottom: 4px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Narrow Band Imaging (NBI) Texture</b></span><br></p>
-    <div>
-        <iframe allowfullscreen frameborder="0" src="https://www.youtube-nocookie.com/embed/oYNuB9NKTYs?rel=0&modestbranding=1&autohide=1&showinfo=0" width="1015" height="540"></iframe>
-    </div>
-
    
 
     <!-- Video 4 -->
@@ -142,7 +144,7 @@
 
     <hr>
     <div class="row text-center">
-        <p style="margin-bottom: 1px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Synchronized polyp video pair with different textures </b></span><br></p>
+        <p style="margin-bottom: 1px; margin-top: 30px;"><span style="color: rgb(13, 13, 13);"><b>Synchronized polyp video pair with different textures and deformation level</b></span><br></p>
         <div class="text-center" style="margin-top: 1px; margin-bottom: 4px">
             <button id="playButton" class="btn btn-primary">Play Both Videos</button>
         </div>
@@ -150,7 +152,7 @@
         <!-- Video 1 -->
         <div class="col-md-6">
             <iframe id="video1" allowfullscreen frameborder="0" 
-                src="https://www.youtube-nocookie.com/embed/NHTvL-Q5c0I?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
+                src="https://www.youtube-nocookie.com/embed/9CEaLOWQppM?rel=0&modestbranding=1&autohide=1&showinfo=0&enablejsapi=1" 
                 width="560" height="315">
             </iframe>
         </div>
