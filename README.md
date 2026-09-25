@@ -54,7 +54,7 @@ Before running any of the programs, create a new working directory for each vide
     ├── config.ini    # parameter file
     ├── model.obj     # ground truth 3D model
     ├── model.mtl     # ground truth 3D model material
-    ├── pose.txt      # robot pose log; one pose per line, formatted <homogenous pose in column-major form>
+    ├── pose.txt      # 4×4 homogeneous transformation matrix in column-major format
     ├── mask.png      # binary corner mask for Olympus endoscopes
     ├── rgb/          # rgb image folder
     │   ├── 0000.png         
