@@ -1,0 +1,12 @@
+# Upstream LTX-2 checkout created by setup_overlay.sh
+LTX-2/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Model weights and generated outputs
+*.safetensors
+*.ckpt
+*.pt
+outputs/

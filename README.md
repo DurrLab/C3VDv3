@@ -13,6 +13,8 @@
 
 This repository contains the rendering code used in *Colonoscopy 3D deformable video dataset with paired depth and sim2real*.
 
+### ArXiv Link : [https://arxiv.org/abs/2606.07891](https://arxiv.org/abs/2606.07891) | Dataset : COMING SOON
+
 <img src="assets/aligned_prev_final.gif" alt="aligned review preview" width="100%" />
 
 
@@ -204,6 +206,13 @@ These scripts visualize the mesh deformation in real-time using Open3D.
 
 ## Sample Video Sequence
 A sample raw video sequence from the dataset is available for download `Placeholder`. Once uncompressed, the folder is ready to be run by the programs.
+
+## Sim2real Video Generation
+The [sim2real/](./sim2real) directory contains inference code for generating
+photorealistic colonoscopy video from ground-truth depth sequences (such as
+those rendered by the pipeline above), built on top of LTX-2. See
+[sim2real/README.md](./sim2real/README.md) for setup and usage. That directory
+is distributed under its own license; see `sim2real/LICENSE`.
 
 <!-- 
 ## Reference

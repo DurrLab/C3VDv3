@@ -1,0 +1,24 @@
+This directory (sim2real/) is a derivative work of Lightricks/LTX-2
+(https://github.com/Lightricks/LTX-2) at commit ae855f8.
+
+It is distributed under the LTX-2 Community License; see LICENSE. This license
+applies only to the contents of this sim2real/ directory; the rest of the
+C3VDv3 repository is covered by its own license.
+
+The directory ltx_overlay/ mirrors the upstream package layout and contains
+modified versions of the following upstream files:
+
+  packages/ltx-core/src/ltx_core/text_encoders/gemma/encoders/base_encoder.py
+  packages/ltx-core/src/ltx_core/text_encoders/gemma/encoders/encoder_configurator.py
+  packages/ltx-trainer/src/ltx_trainer/validation_sampler.py
+
+The directory ltx_overlay/ also contains the following file that lives in the
+upstream tree path but is original to this release:
+
+  packages/ltx-trainer/scripts/inference_edge_ic.py
+
+A per-file Modification notice header on each derivative overlay file
+describes the specific changes relative to upstream.
+
+The scripts/ and run/ trees are original work by the authors of this release
+and are also distributed under the LTX-2 Community License.
