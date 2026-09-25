@@ -52,7 +52,7 @@ Before running any of the programs, create a new working directory for each vide
     ├── config.ini    # parameter file
     ├── model.obj     # ground truth 3D model
     ├── model.mtl     # ground truth 3D model material
-    ├── pose.txt      # robot pose log; one pose per line, formatted <time in seconds> <homogenous pose in column-major form>
+    ├── pose.txt      # robot pose log; one pose per line, formatted <homogenous pose in column-major form>
     ├── mask.png      # binary corner mask for Olympus endoscopes
     ├── rgb/          # rgb image folder
     │   ├── 0000.png         
@@ -88,7 +88,7 @@ This repository includes a deformation generation workflow for simulating colon 
     │   │   ...
     │   └── N-1.png
     ├── coverage_mesh.obj    # Undeformed Reference Mesh
-    └── pose.txt             # 4×4 homogeneous transformation matrix in row-major format
+    └── pose.txt             # 4×4 homogeneous transformation matrix in column-major format
 ```
 
 #### Setup
